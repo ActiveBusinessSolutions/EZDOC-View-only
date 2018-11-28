@@ -1,0 +1,195 @@
+<div class="page-container">
+  <!-- BEGIN CONTENT -->
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <!-- BEGIN PAGE CONTENT BODY -->
+    <div class="page-content">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-0 col-md-2">
+          </div>
+          <div class="col-xs-12 col-md-8">
+            <div class="portlet light">
+              <div class="portlet-title tabbable-line">
+                <div class="caption caption-md">
+                  <i class="icon-globe theme-font hide"></i>
+                  <span class="caption-subject font-blue-madison bold uppercase">User Information</span>
+                </div>
+                <ul class="nav nav-tabs">
+                  <li class="active">
+                    <a href="#tab_1_1" data-toggle="tab">Private Information</a>
+                  </li>
+                  <li>
+                    <a href="#tab_1_2" data-toggle="tab">Change Avatar</a>
+                  </li>
+                  <li>
+                    <a href="#tab_1_3" data-toggle="tab">Change Password</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="portlet-body">
+                <div class="tab-content">
+                  <!-- PERSONAL INFO TAB -->
+                  <div class="tab-pane active" id="tab_1_1">
+                    <form *ngIf="profile" role="form" method="PATCH" id="submit_form1" #saveProfileForm="ngForm"
+                          (ngSubmit)="onSubmit(saveProfileForm)">
+                      <div class="row">
+                        <div class="col-xs-6 col-md-6">
+                          <div class="form-group">
+                            <label class="control-label">First Name</label>
+                            <input name="first_name" type="text" placeholder="First Name" class="form-control"
+                                   [(ngModel)]="profile.first_name" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Last Name</label>
+                            <input name="last_name" type="text" placeholder="Last Name" class="form-control"
+                                   [(ngModel)]="profile.last_name" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Phone Number</label>
+                            <input name="phonenumber" type="text" placeholder="865-23-4567" class="form-control"
+                                   [(ngModel)]="profile.phone" required>
+                          </div>
+                          <div *ngIf="email" class="form-group">
+                            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                            <label class="control-label">Email</label>
+                            <div class="input-icon">
+                              <i class="fa fa-envelope"></i>
+                              <input name="email" class="form-control placeholder-no-fix" type="text"
+                                     placeholder="tense@window.com" [(ngModel)]="email" readonly required/>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Date of Birth</label>
+                            <input name="dob" type="date" class="form-control" [(ngModel)]="profile.birthday" required>
+                          </div>
+                          <div class="margin-bottom-10">
+                            <div class="col-sm-3 margin-top-10">
+                              Gender
+                            </div>
+                            <div class="col-sm-9">
+                              <div class="mt-radio-inline">
+                                <label class="mt-radio">
+                                  <input name="gender" type="radio" value="male" [(ngModel)]="profile.gender"> Male
+                                  <span></span>
+                                </label>
+                                <label class="mt-radio">
+                                  <input name="gender" type="radio" value="female" [(ngModel)]="profile.gender"> Female
+                                  <span></span>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xs-6 col-md-6">
+                          <div class="form-group">
+                            <label class="control-label">EOIR</label>
+                            <input type="text" name="EOIR" placeholder="EOIR Here" class="form-control"
+                                   [(ngModel)]="profile.EOIR" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">State Bar Number</label>
+                            <input type="text" name="state_bar_number" placeholder="678-98" class="form-control"
+                                   [(ngModel)]="profile.state_bar_number" required>
+                          </div>
+                          <div *ngIf="lawfirm_name" class="form-group">
+                            <label class="control-label">Law Firm Name</label>
+                            <div class="input-icon">
+                              <i class="fa fa-legal"></i>
+                              <input type="text" name="lawfirm_name" placeholder="EZ Law Company" class="form-control"
+                                     [(ngModel)]="lawfirm_name" readonly required>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-8 col-sm-10 col-md-10">
+                        </div>
+                        <div class="col-xs-4 col-sm-2 col-md-2">
+                          <button class="btn green pull-right" type="submit"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                      </div>
+
+                    </form>
+                  </div>
+                  <!-- END PERSONAL INFO TAB -->
+                  <!-- CHANGE AVATAR TAB -->
+                  <div class="tab-pane" id="tab_1_2" style="text-align: center">
+                    <p>
+                      You can change your avatar here.
+                    </p>
+                    <form id="avatarForm" name="avatarForm" action="#" role="form" method="PATCH" #avatarForm="ngForm"
+                          (ngSubmit)="onSubmitAvatar(avatarForm)">
+                      <div class="form-group">
+                        <div class="fileinput fileinput-new" data-provides="fileinput">
+
+                          <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                            <img *ngIf="profile" id="faceImg" name="face" src={{profile.avatar}} alt=""
+                                 style="height: 100%"/>
+                          </div>
+                          <div class="fileinput-preview fileinput-exists thumbnail"
+                               style="max-width: 200px; max-height: 150px;"></div>
+                          <div>
+                    <span class="btn default btn-file">
+                      <span class="fileinput-new"> Select image </span>
+                      <span class="fileinput-exists"> Change </span>
+                      <input type="file" id="avatarFile" name="avatarFile">
+                    </span>
+                            <a href="javascript:;" class="btn default fileinput-exists" data-dismiss="fileinput">
+                              Remove </a>
+                          </div>
+                        </div>
+                        <div id="file_warning" class="clearfix margin-top-15" style="display: none">
+                          <span class="label label-danger">Warning!</span>
+                          <span id="file_message">File size is exceed.</span>
+                        </div>
+                      </div>
+                      <div id="upload_file" class="margin-top-10" style="display: none">
+                        <button class="btn green" type="submit" id="changeAvatarButton"> Change Avatar</button>
+                      </div>
+                    </form>
+                  </div>
+                  <!-- END CHANGE AVATAR TAB -->
+                  <!-- CHANGE PASSWORD TAB -->
+                  <div class="tab-pane" id="tab_1_3">
+                    <form *ngIf="profile" id="submit_form2" name="change_password" #changePasswordForm="ngForm"
+                          (ngSubmit)="onChangePassword(changePasswordForm)">
+                      <div class="form-group">
+                        <label class="control-label">Current Password</label>
+                        <input type="password" name="password" class="form-control" [(ngModel)]="current_password"
+                               required>
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label">New Password</label>
+                        <input id="newPasswordInput" name="new_password" type="password" [(ngModel)]="new_password"
+                               class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label">Confirm New Password</label>
+                        <input id="confirmPasswordInput" type="password" name="renew_password" class="form-control" [(ngModel)]="confirm_password"
+                               required>
+                      </div>
+                      <div class="form-group">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="pull-right">
+                              <button id="password_update" class="btn green" type="submit">Change Password</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <!-- END CHANGE PASSWORD TAB -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-0 col-md-2">
+          </div>
+        </div>
+        <!--</div>-->
+      </div>
+    </div>
+  </div>
+</div>

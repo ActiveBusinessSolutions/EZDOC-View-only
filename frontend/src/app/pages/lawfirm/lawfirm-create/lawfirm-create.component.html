@@ -1,0 +1,65 @@
+<div class="page-container">
+  <div class="page-content-wrapper">
+    <div class="page-content">
+      <div class="container">
+        <div class="page-content-inner">
+          <div class="portlet light ">
+            <div class="portlet-title">
+              <div class="caption font-dark-sunglo">
+                <img src="/assets/common/img/icons/lawfirm.png" class="img-icon" />&nbsp;
+                <span class="caption-subject bold uppercase">Law Firm Create</span>
+              </div>
+            </div>
+            <div class="portlet-body form">
+              <form role="form" id ="lawfirm_create">
+                <div class="form-body">
+                  <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                      <div class="form-group">
+                        <label class="control-label">Law Firm Name</label>
+                        <input type="text" name="lawfirm_name" class="form-control" placeholder="Law Firm Name" [(ngModel)]="lawfirm.name" [ngModelOptions]="{standalone: true}">
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label">Address</label>
+                        <input type="text" name="lawfirm_address" class="form-control" placeholder="Address" [(ngModel)]="lawfirm.address" [ngModelOptions]="{standalone: true}">
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label">City</label>
+                        <input type="text" name="lawfirm_city" class="form-control" placeholder="Address" [(ngModel)]="lawfirm.city" [ngModelOptions]="{standalone: true}">
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label">State</label>
+                        <div id="stateSelector"></div>
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                      <div class="form-group">
+                        <label class="control-label">Password</label>
+                        <input type="password" name="lawfirm_password" class="form-control" [(ngModel)]="lawfirm.password" [ngModelOptions]="{standalone: true}">
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label">Zip</label>
+                        <input type="text" name="lawfirm_zip" class="form-control" placeholder="Zip" [(ngModel)]="lawfirm.zip" [ngModelOptions]="{standalone: true}">
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label">Phone Number</label>
+                        <input type="text" name="lawfirm_phone_number" class="form-control" placeholder="Phone Number" [(ngModel)]="lawfirm.phone_number" [ngModelOptions]="{standalone: true}">
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label">Fax Number</label>
+                        <input type="text" name="lawfirm_fax_number" class="form-control" placeholder="Fax Number" [(ngModel)]="lawfirm.fax_number" [ngModelOptions]="{standalone: true}">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group text-center">
+                  <button type="submit" class="btn green wide" (click)="onSubmit()">Create</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

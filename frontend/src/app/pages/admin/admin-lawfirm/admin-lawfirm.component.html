@@ -1,0 +1,68 @@
+<div class="admin-title">
+  <h1><img src="/assets/common/img/icons/lawfirm.png" class="admin-title-img" /> Lawfirms</h1>
+</div>
+
+<div class="admin-content">
+  <div class="row">
+    <div class="col-md-4">
+      <label>{{ count }} Lawfirms</label>
+      <div id="lawfirmList"></div>
+    </div>
+    <div class="col-md-8">
+      <div class="portlet light" style="margin-top: 25px">
+        <div class="portlet-body form">
+          <form role="form">
+            <div class="form-body" style="padding-top: 0">
+              <div class="form-group">
+                <label class="control-label">Name</label>
+                <input id="lawfirmNameInput" class="form-control input-sm">
+              </div>
+              <div class="form-group">
+                <label class="control-label">Password</label>
+                <input id="lawfirmPasswordInput" class="form-control input-sm" type="password">
+              </div>
+              <div class="form-group">
+                <label class="control-label">Address</label>
+                <input id="lawfirmAddressInput" class="form-control input-sm">
+              </div>
+              <div class="form-group">
+                <label class="control-label">City</label>
+                <input id="lawfirmCityInput" class="form-control input-sm">
+              </div>
+              <div class="form-group">
+                <label class="control-label">State</label>
+                <input id="lawfirmStateInput" class="form-control input-sm">
+              </div>
+              <div class="form-group">
+                <label class="control-label">Zip</label>
+                <input id="lawfirmZipInput" class="form-control input-sm">
+              </div>
+              <div class="form-group">
+                <label class="control-label">Phone Number</label>
+                <input id="lawfirmPhoneNumberInput" class="form-control input-sm">
+              </div>
+              <div class="form-group">
+                <label class="control-label">Fax Number</label>
+                <input id="lawfirmFaxNumberInput" class="form-control input-sm">
+              </div>
+            </div>
+            <div class="">
+              <div class="row">
+                <div class="col-sm-4">
+                  <button class="btn btn-default btn-sm" (click)="resetForm()">Reset</button>
+                </div>
+                <div class="col-sm-8">
+                  <div class="pull-right">
+                    <button (click)="createLawfirm()" class="btn btn-default btn-sm">Create</button>
+                    <button (click)="updateLawfirm()" class="btn green btn-sm">Update</button>
+                    <button (click)="deleteLawfirm()" class="btn red btn-sm">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

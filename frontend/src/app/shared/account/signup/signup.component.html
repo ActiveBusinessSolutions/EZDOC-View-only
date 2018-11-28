@@ -1,0 +1,149 @@
+<div class="container">
+  <div class="portlet light bordered box-shadow">
+    <div class="portlet-title">
+      <div class="caption font-dark-sunglo">
+        <i class="icon-user font-dark-sunglo"></i>
+        <span class="caption-subject bold uppercase">User Signup</span>
+      </div>
+    </div>
+    <div class="portlet-body form">
+      <form id="registerForm" #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
+        <div class="margin-bottom-10">
+          <div class="col-sm-3 margin-top-10">
+            <div>Permission Level</div>
+          </div>
+          <div class="col-sm-9">
+            <div class="mt-radio-inline">
+              <label class="mt-radio">
+                <input type="radio" (click)="SelectRole('admin')" name="optionsRadios1">
+                Admin
+                <span></span>
+              </label>
+              <label class="mt-radio">
+                <input type="radio" (click)="SelectRole('paralegal')" name="optionsRadios1">
+                Paralegal
+                <span></span>
+              </label>
+              <label class="mt-radio">
+                <input type="radio" (click)="SelectRole('attorney')" name="optionsRadios1" checked>
+                Attorney
+                <span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <!-- BEGIN FORM-->
+            <div class="form-group">
+              <input class="form-control" type="text" placeholder="First Name" name="FirstName"
+                     [(ngModel)]="profile.first_name"
+                     required/>
+            </div>
+            <div class="form-group">
+              <input class="form-control" type="text" placeholder="Last Name" name="LastName"
+                     [(ngModel)]="profile.last_name"
+                     required/>
+            </div>
+            <div class="form-group">
+              <input class="form-control" type="text" placeholder="Phone Number" name="PhoneNumber"
+                     [(ngModel)]="profile.phone" required/>
+            </div>
+            <div class="form-group">
+              <label>Please input your email address. If you are invited, First, select a Law Firm and then select your email address.</label>
+              <div id="emailSelector"></div>
+            </div>
+            <div class="form-group">
+              <input class="form-control placeholder-no-fix" type="password" autocomplete="off" id="register_password"
+                     placeholder="Password" name="password" [(ngModel)]="user.password" required/>
+            </div>
+            <div class="form-group">
+              <input class="form-control placeholder-no-fix" type="password" autocomplete="off"
+                     placeholder="Confirm Password" name="rpassword" [(ngModel)]="retype_password" required/>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <label class="control-label col-md-3">Birthday</label>
+                <div class="col-md-9">
+                  <input id="birthdayInput" type="date" class="form-control" name="birthday"
+                         [(ngModel)]="profile.birthday" required>
+                </div>
+              </div>
+            </div>
+            <div class="margin-bottom-10">
+              <div class="row">
+                <div class="col-sm-3 margin-top-10">
+                  <div>Gender</div>
+                </div>
+                <div class="col-sm-9">
+                  <div class="mt-radio-inline">
+                    <label class="mt-radio">
+                      <input type="radio" (click)="user.gender = 'male'" name="optionsRadios" checked> Male
+                      <span></span>
+                    </label>
+                    <label class="mt-radio">
+                      <input type="radio" (click)="user.gender = 'female'" name="optionsRadios"> Female
+                      <span></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END FORM-->
+          </div>
+          <div class="col-md-6">
+            <!-- BEGIN FORM-->
+            <div class="form-group">
+              <input class="form-control" type="text" placeholder="EOIR" name="EOIR" [(ngModel)]="profile.EOIR"
+                     required/>
+            </div>
+            <div class="form-group">
+              <input class="form-control" type="text" placeholder="State Bar Number" name="State Bar Number"
+                     [(ngModel)]="profile.state_bar_number" required/>
+            </div>
+            <div id="lawfirmSelectorContainer" class="form-group">
+              <label>Please select a Law Firm.</label>
+              <div id="lawfirmSelector"></div>
+            </div>
+            <!--<div *ngIf="role == 'admin'" class="form-group">-->
+              <!--<input class="form-control" type="text" placeholder="Law Firm Id" id="lawfirmIdInput" required/>-->
+            <!--</div>-->
+            <div class="form-group">
+              <input class="form-control" type="password" name="lawfirm_password" placeholder="Law Firm Password"
+                     [(ngModel)]="lawfirm_password"
+                     required/>
+            </div>
+            <div class="margin-bottom-10">
+              <div class="form-group">
+                <div class='row'>
+                  <div class="col-md-2 pull-left">
+                    <label>Captcha</label>
+                  </div>
+                  <div class="col-md-4" id="captcha_component">
+                    <img src={{captcha_image}} style="width: 100%">
+                    <p>
+                      [ <a (click)="getCaptcha()">Generate a new code</a> ]
+                    </p>
+                  </div>
+                  <div class="col-md-6">
+                    <input class="form-control" type="text" id="captcha" [(ngModel)]="captcha_value"
+                           [ngModelOptions]="{standalone: true}" required/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <button (click)="back()" id="register-back-btn" type="button"
+                  class="btn grey-salsa btn-outline">
+            Back
+          </button>
+          <button type="submit" id="register-submit-btn" class="btn green pull-right">
+            Create
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
