@@ -98,6 +98,7 @@ export class ClientListComponent implements OnInit {
         });
 
         $('#detailButton').click(function () {
+          localStorage.setItem('form_wizard', "1");
           self._router.navigate(['/pages/client/detail/' + self.selected_ids[0] + '/1']);
         });
 
@@ -135,6 +136,9 @@ export class ClientListComponent implements OnInit {
         }
         console.log('clients', this.clients);
 
+        this.selected_ids = [];
+        $('#detailButton, #formsButton, #deleteButton').addClass('disabled');
+        
         let page = this.clientsTable.page();
         this.clientsTable.clear();
         $.each(this.clients, function (index, value) {

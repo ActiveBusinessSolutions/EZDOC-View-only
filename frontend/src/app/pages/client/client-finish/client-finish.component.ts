@@ -34,6 +34,7 @@ export class ClientFinishComponent implements OnInit {
   private client_id: number;
   private form_id: number;
   private print_index: number;
+  private detailLink;
 
   constructor(private _router: Router,
     private _clientService: ClientService,
@@ -113,6 +114,11 @@ export class ClientFinishComponent implements OnInit {
       }, error => {
         $('.loading').fadeOut();
       });
+  }
+
+  detail() {
+    localStorage.setItem('form_wizard', "1");
+    this._router.navigate(['/pages/client/detail/' + this.client_id + '/1']);
   }
 
   printForm(id) {
