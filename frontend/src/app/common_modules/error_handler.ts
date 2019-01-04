@@ -29,7 +29,10 @@ export class ErrorHandler {
       Notification.notifyNormals(errors);
     }
     else {
-      if (/*body.code === 400 || */body.code === 401) {
+      // Handle error codes
+      if (body.code == 0) { // Backend server is not running, code: 0
+        window.location.href = "/shared/not_found";
+      } else if (body.code == 401) { // Unauthorized, code: 401
         Common.logout();
         window.location.href = 'account/login';
       } else {

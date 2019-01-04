@@ -10,6 +10,7 @@ import {DocService} from "../../../services/doc.service";
 import {Notification} from "../../../common_modules/notification";
 import "../../../../assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js"
 import "../../../../assets/plugins/jqwidgets/jqxnavigationbar.js"
+import { Common } from 'app/common';
 
 declare let $: any;
 declare let bootbox;
@@ -64,15 +65,15 @@ export class FormDocComponent implements OnInit {
       });
     });
 
-    if (!FormDocComponent.saving) {
-      // Autosave document automatically by 1 min interval
-      window.setInterval(function () {
-        if (self.client_id != 0 && self._router.url.indexOf('client/detail') > -1) {
-          self.submitDoc();
-        }
-      }, 60000);
-      FormDocComponent.saving = true;
-    }
+    // TODO: Autosave document automatically by 1 min interval
+    // if (!FormDocComponent.saving) {
+    //   window.setInterval(function () {
+    //     if (self.client_id != 0 && self._router.url.indexOf('client/detail') > -1) {
+    //       self.submitDoc();
+    //     }
+    //   }, 60000);
+    //   FormDocComponent.saving = true;
+    // }
   }
 
   onResize() {
@@ -125,35 +126,15 @@ export class FormDocComponent implements OnInit {
       $('#docContainer').hide();
       $('#wizardContainer').show();
       $('#wizardContainer').html(
-        '<form class="form-horizontal" action="#" id="wizardForm" method="POST">\n' +
-        '  <div class="form-wizard">\n' +
-        '    <div class="form-body">\n' +
-        '      <ul class="nav nav-pills nav-justified steps" id="wizardNavigator">\n' +
-        '      </ul>\n' +
-        '      <div id="bar" class="progress progress-striped" role="progressbar">\n' +
-        '        <div class="progress-bar progress-bar-success"> </div>\n' +
-        '      </div>\n' +
-        '      <div id="wizardTabsContainer" class="tab-content">\n' +
-        '      </div>\n' +
-        '    </div>\n' +
-        '    <div class="form-actions" style="padding-top: 15px">\n' +
-        '      <div class="row">\n' +
-        '        <div class="col-md-12">\n' +
-        '          <div class="pull-right">\n' +
-        '            <a href="javascript:;" class="btn default button-previous">\n' +
-        '              <i class="fa fa-angle-left"></i> Back </a>\n' +
-        '            <a href="javascript:;" class="btn btn-outline green button-next"> Continue\n' +
-        '              <i class="fa fa-angle-right"></i>\n' +
-        '            </a>\n' +
-        '            <a href="javascript:;" class="btn green button-submit"> Submit\n' +
-        '              <i class="fa fa-check"></i>\n' +
-        '            </a>\n' +
-        '          </div>\n' +
-        '        </div>\n' +
-        '      </div>\n' +
-        '    </div>\n' +
-        '  </div>\n' +
-        '</form>');
+        '<form class="form-horizontal" action="#" id="wizardForm" method="POST">\
+          <div class="form-wizard">\
+            <div class="form-body">\
+              <div id="wizardTabsContainer" class="tab-content create-client-body">\
+              </div>\
+              <hr>\
+            </div>\
+          </div>\
+        </form>');
 
       this.buildWizards();
       this.handleSpecialEvents();
@@ -208,32 +189,83 @@ export class FormDocComponent implements OnInit {
     }
   }
 
+  validateByPattern(str, pattern) {
+    var patt = new RegExp(pattern);
+    var res = patt.test(str);
+
+    return res;
+  }
+
+  validationDom(item, value, pattern, errorTitle, errorMessage) {
+    let dom = $("[dom-id=" + item.id + "]");
+    console.log(dom);
+    if (!this.validateByPattern(value, pattern)) {
+      console.log('validation error', item);
+      dom.focus();
+      Notification.notifyAny({
+        message: errorMessage,
+        type: "error",
+        title: errorTitle, 
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  validateItem(item, value) {
+    let validationType = item.validation_type;
+    let validationLabel = item.validation_label;
+    if (Common.isNone(validationLabel)) validationLabel = item.label;
+    if (Common.isNone(validationLabel)) validationLabel = "The focused field";
+    switch (validationType) {
+      case "A-Number":
+        return this.validationDom(item, value, /^A\d{8,9}$/, "A-Number mismatch", validationLabel + " is missing type. eg: A12345678, A123456789");
+      case "000-00-0000":
+        return this.validationDom(item, value, /^\d{3}-\d{2}-\d{4}$/, "Format 000-00-0000", validationLabel + " is missing type. eg: 123-45-7890");
+      case "date":
+        return this.validationDom(item, value, /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/, "Invalid date", validationLabel + " is invalid date. eg: 2019-01-01");
+    }
+
+    return true;
+  }
+
   submitDoc() {
     $('.loading').show();
 
     this.extractInputs();
 
     let data = [];
-    for (let i = 0; i < this.pageCount; i++) {
-      let inputs = FormHelper.getLocalDoc(this.client_id, this.form_id, (i + 1));
-      let body = this.template.pages[i].body || {schema: []};
-      let schema = body.schema;
-      for (let j in schema) {
-        let item = schema[j];
-        if (FormHelper.isInput(item.type)) {
-          let value = inputs[item.key] || null;
-          if (value != null) {
-            let input = {
-              key: item.key,
-              value: value,
-              foreign_key: item.foreign_key || "",
-              type: item.type,
-              structure: item.structure,
-            };
-            data.push(input);
+    console.log('subimt page', this.page_index);
+    // Save one page
+    // for (let i = 0; i < this.pageCount; i++) {
+    let i = this.page_index - 1;
+    let inputs = FormHelper.getLocalDoc(this.client_id, this.form_id, (i + 1));
+    let body = this.template.pages[i].body || {schema: []};
+    let schema = body.schema;
+    for (let j in schema) {
+      let item = schema[j];
+      if (FormHelper.isInput(item.type)) {
+        let value = inputs[item.key] || null;
+        // validate the inputs
+        if (!Common.isNone(item.validation_type)) {
+          if (!this.validateItem(item, value)) {
+            $(".loading").hide();
+            return;
           }
         }
+        if (value != null) {
+          let input = {
+            key: item.key,
+            value: value,
+            foreign_key: item.foreign_key || "",
+            type: item.type,
+            structure: item.structure,
+          };
+          data.push(input);
+        }
       }
+      // }
     }
 
     if (this.form_id == 1) {
@@ -271,6 +303,7 @@ export class FormDocComponent implements OnInit {
           if (message != "") {
             Notification.notifyAny({message: message, title: 'Server'});
           }
+          this.getDoc();
 
           $('.loading').fadeOut();
         }, error => {
@@ -316,25 +349,11 @@ export class FormDocComponent implements OnInit {
     $('#wizardTabsContainer').html('');
     for (let i in this.template.wizards) {
       let wizard = this.template.wizards[i];
-      let index = Number(i) + 1;
-      let tab = $('<li>\n' +
-        '<a href="#tab' + index + '" data-toggle="tab" class="step">\n' +
-        '  <span class="number"> ' + index + ' </span>\n' +
-        '  <span class="desc">\n' +
-        '    <i class="fa fa-check"></i> ' + wizard.name +
-        '  </span>\n' +
-        '</a>\n' +
-        '</li>');
-      $('#wizardNavigator').append(tab);
+      let wizardDiv = $('<div></div>');
 
-      let active = index == 1 ? ' active' : '';
-      let tab_div = $('<div class="tab-pane' + active + '" id="tab' + index + '"></div>');
-      let panel_group = $('<div id="accordion' + index + '">');
       for (let j in wizard.sections) {
-        let collapse_key = index + '_' + j;
         let section = wizard.sections[j];
-        let panel_header = $('<div class="panel_header">' + section.name + '</div>');
-        let panel_body = $('<div class="panel_body"></div>')
+        let formBody = $('<div></div>');
 
         if (!isNullOrUndefined(this.wizard_inputs[wizard.id])) {
           let inputs = this.wizard_inputs[wizard.id][section.id];
@@ -343,7 +362,11 @@ export class FormDocComponent implements OnInit {
             if (input.key == '') continue;
 
             let form_group = $('<div class="' + input.response_class + '"></div>');
-            form_group.append($('<label class="label-grey">' + input.label + '</label>'));
+            let label_style = "";
+            if (input.response_class.includes("d-flex")) {
+              label_style = "width: 50%; margin-right: 15px";
+            }
+            form_group.append($('<label class="label-grey" style="' + label_style + '">' + input.label + '</label>'));
             let input_item = this.getInputByItem(input);
 
             form_group.append(input_item);
@@ -361,37 +384,21 @@ export class FormDocComponent implements OnInit {
               }
               row.append(form_group);
 
-              panel_body.append(row);
+              formBody.append(row);
             } else {
-              panel_body.children('.row:last').append(form_group);
+              formBody.children(".row:last").append(form_group);
             }
           }
         }
 
-        panel_group.append(panel_header);
-        panel_group.append(panel_body);
-        tab_div.append(panel_group);
+        wizardDiv.append(formBody);
       }
 
-      panel_group.jqxNavigationBar({
-        width: '100%',
-        theme: 'metro',
-        showArrow: false,
-      });
-      panel_group.on('expandedItem', function (event) {
-        let expandedItem = event.args.item;
-        let index = Number(expandedItem) + 1;
-        window.scrollTo(0, $(this).context.offsetTop);
-      });
-
-
-      $('#wizardTabsContainer').append(tab_div);
+      $("#wizardTabsContainer").append(wizardDiv);
     }
 
-    this.initWizard();
-
     // add special events
-    $('#normal_is_married_1, #normal_is_married_0, #normal_have_children_0, #normal_have_children_1').change(function () {
+    $('#normal_has_mailing_address_yes, #normal_has_mailing_address_no').change(function () {
       FormDocComponent.instance.handleSpecialEvents();
     });
 
@@ -414,18 +421,29 @@ export class FormDocComponent implements OnInit {
   }
 
   handleSpecialEvents() {
-    if ($('#normal_is_married_0')[0].checked) {
-      $('#accordion1').jqxNavigationBar('disableAt', 2);
+    try {
+      var hasMailingAddress = $('#normal_has_mailing_address_yes')[0].checked;
+      var mailingIds = [
+        'normal_us_mailing_address_care',
+        'normal_us_mailing_telephone_number',
+        'normal_us_mailing_street_number_name',
+        'normal_mailing_address_apt_type_apartment',
+        'normal_mailing_address_apt_type_suite',
+        'normal_mailing_address_apt_type_floor',
+        'normal_us_mailing_apt_number',
+        'normal_us_mailing_city',
+        'normal_us_mailing_state',
+        'normal_us_mailing_zip_code',
+        'normal_us_mailing_address_county',
+        'normal_us_mailing_address_province',
+        'normal_us_mailing_address_postal_code',
+        'normal_us_mailing_address_country',
+      ]
+      for (var i in mailingIds) {
+        $('#' + mailingIds[i])[0].disabled = !hasMailingAddress;
+      }
     }
-    if ($('#normal_is_married_1')[0].checked) {
-      $('#accordion1').jqxNavigationBar('enableAt', 2);
-    }
-    if ($('#normal_have_children_0')[0].checked) {
-      $('#accordion1').jqxNavigationBar('disableAt', 3);
-    }
-    if ($('#normal_have_children_1')[0].checked) {
-      $('#accordion1').jqxNavigationBar('enableAt', 3);
-    }
+    catch (e) { }
   }
 
   initInputsBySection() {
@@ -458,6 +476,7 @@ export class FormDocComponent implements OnInit {
       case 'input':
         dom = $('<input>');
         dom.addClass('form-control');
+        if(item.validation_type == 'date') dom.attr('type', 'date');
         break;
       case 'textarea':
         dom = $('<textarea></textarea>');
@@ -496,62 +515,5 @@ export class FormDocComponent implements OnInit {
     }
 
     return dom;
-  }
-
-  initWizard() {
-    function handleTitle(tab, navigation, index) {
-      let total = navigation.find('li').length;
-      let current = index + 1;
-      // set wizard title
-      // $('.step-title', $('#wizardForm')).text('Step ' + (index + 1) + ' of ' + total);
-      // set done steps
-      jQuery('li', $('#wizardForm')).removeClass("done");
-      let li_list = navigation.find('li');
-      for (let i = 0; i < index; i++) {
-        jQuery(li_list[i]).addClass("done");
-      }
-
-      if (current == 1) {
-        $('#wizardForm').find('.button-previous').hide();
-      } else {
-        $('#wizardForm').find('.button-previous').show();
-      }
-
-      if (current >= total) {
-        $('#wizardForm').find('.button-next').hide();
-        $('#wizardForm').find('.button-submit').show();
-      } else {
-        $('#wizardForm').find('.button-next').show();
-        $('#wizardForm').find('.button-submit').hide();
-      }
-      App.scrollTo($('.page-title'));
-    }
-
-    $('#wizardForm').bootstrapWizard({
-      'nextSelector': '.button-next',
-      'previousSelector': '.button-previous',
-      onTabClick: function (tab, navigation, index, clickedIndex) {
-        handleTitle(tab, navigation, clickedIndex);
-      },
-      onNext: function (tab, navigation, index) {
-        handleTitle(tab, navigation, index);
-      },
-      onPrevious: function (tab, navigation, index) {
-        handleTitle(tab, navigation, index);
-      },
-      onTabShow: function (tab, navigation, index) {
-        let total = navigation.find('li').length;
-        let current = index + 1;
-        let $percent = (current / total) * 100;
-        $('#wizardForm').find('.progress-bar').css({
-          width: $percent + '%'
-        });
-      }
-    });
-
-    $('#wizardForm').find('.button-previous').hide();
-    $('#wizardForm .button-submit').click(function () {
-      FormDocComponent.instance.submitDoc();
-    }).hide();
   }
 }

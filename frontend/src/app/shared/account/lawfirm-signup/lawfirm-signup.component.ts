@@ -6,65 +6,103 @@ import { Common } from '../../../common';
 import { Notification } from '../../../common_modules/notification';
 import { ProfileService } from '../../../services/profile.service';
 import { Router } from '@angular/router';
+import { StaticData } from 'app/static-data';
 
 declare let $;
 declare let App;
 declare let bootbox;
 
 @Component({
-  selector: 'app-lawfirm-signup',
-  templateUrl: './lawfirm-signup.component.html',
-  styleUrls: [
-    './lawfirm-signup.component.css',
-  ],
-  providers: [LawfirmService, ProfileService],
+  selector: "app-lawfirm-signup",
+  templateUrl: "./lawfirm-signup.component.html",
+  styleUrls: ["./lawfirm-signup.component.css"],
+  providers: [LawfirmService, ProfileService]
 })
-
 export class LawfirmSignupComponent {
-  static instance: LawfirmSignupComponent;
   lawfirm: Lawfirm = new Lawfirm();
+  confirm_password: string;
 
-  constructor(private _lawfirmService: LawfirmService,
-    private _router: Router) {
-    LawfirmSignupComponent.instance = this;
-  }
+  constructor(
+    private _lawfirmService: LawfirmService,
+    private _router: Router
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngAfterViewInit() {
-    FormValidation.validate('lawfirm_create', function () {
-      LawfirmSignupComponent.instance.createLawfirm();
+    let self = this;
+    FormValidation.validate("lawfirm_create", function() {
+      self.createLawfirm();
     });
 
-    $(document).ready(function () {
-      $('#stateSelector').jqxComboBox({
-        theme: 'metro',
-        source: Common.states,
-        width: '100%',
-        height: 35
+    $(document).ready(function() {
+      $("#countrySelector").jqxComboBox({
+        theme: "metro",
+        source: StaticData.countries,
+        width: "100%",
+        height: 32
+      });
+
+      $("#stateSelector").jqxComboBox({
+        theme: "metro",
+        source: StaticData.states,
+        width: "100%",
+        height: 32
       });
     });
   }
 
-  onSubmit() {
+  onAptTypeChanged(event, type) {
+    event.preventDefault();
+
+    this.lawfirm.apartment = false;
+    this.lawfirm.suite = false;
+    this.lawfirm.floor = false;
+
+    if (type == "apartment") {
+      this.lawfirm.apartment = true;
+    } else if (type == "suite") {
+      this.lawfirm.suite = true;
+    } else {
+      this.lawfirm.floor = true;
+    }
   }
+
+  onSubmit() {}
 
   createLawfirm() {
     if (!this.lawfirm) {
       return;
     }
-    this.lawfirm.state = $('#stateSelector').val();
-    if (this.lawfirm.state == '') {
-      Notification.notifyAny({ message: 'The state field is required.', type: 'error' });
+    this.lawfirm.state = $("#stateSelector").val();
+    this.lawfirm.country = $("#countrySelector").val();
+    if (this.lawfirm.state == "") {
+      Notification.notifyAny({
+        message: "The state field is required.",
+        type: "error"
+      });
+      return;
+    }
+    if (this.lawfirm.country == "") {
+      Notification.notifyAny({
+        message: "The country field is required.",
+        type: "error"
+      });
+      return;
+    }
+    if (this.lawfirm.password != this.confirm_password) {
+      Notification.notifyAny({
+        message: "The confirm password does not match.",
+        type: "error"
+      });
       return;
     }
 
-    $('.loading').show();
+    $(".loading").show();
 
-    this._lawfirmService.createLawfirm(this.lawfirm)
-      .subscribe(data => {
-        $('.loading').fadeOut();
+    this._lawfirmService.createLawfirm(this.lawfirm).subscribe(
+      data => {
+        $(".loading").fadeOut();
 
         let message = data.success.message;
         let self = this;
@@ -73,16 +111,18 @@ export class LawfirmSignupComponent {
           buttons: {
             ok: {
               label: "OK",
-              className: 'btn-primary',
-              callback: function () {
-                self._router.navigate(['/']);
+              className: "btn-primary",
+              callback: function() {
+                self._router.navigate(["/"]);
               }
             }
           }
         });
-      }, error2 => {
-        $('.loading').fadeOut();
-      });
+      },
+      error2 => {
+        $(".loading").fadeOut();
+      }
+    );
   }
 
   back() {

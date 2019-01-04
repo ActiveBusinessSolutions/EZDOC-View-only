@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { SharedRoutingModule } from './shared-routing.module';
 import {AccountRoutingModule} from "./account/account-routing.module";
 import {BrowserModule} from "@angular/platform-browser";
 import {FormsModule} from "@angular/forms";
@@ -17,14 +18,18 @@ import { CommonModule } from '@angular/common';
 import { TypeComponent } from './account/type/type.component';
 import { LawfirmSignupComponent } from './account/lawfirm-signup/lawfirm-signup.component';
 import { HttpModule } from '@angular/http';
+import { AvatarModule } from 'ng2-avatar';
+import { SharedComponent } from './shared.component';
 
 @NgModule({
   imports: [
+    SharedRoutingModule,
     AccountRoutingModule,
     BrowserModule,
     FormsModule,
     CommonModule,
-    HttpModule
+    HttpModule,
+    AvatarModule,
   ],
   declarations: [
     AccountComponent,
@@ -38,7 +43,8 @@ import { HttpModule } from '@angular/http';
     ResetPasswordComponent,
     NotFoundComponent,
     TypeComponent,
-    LawfirmSignupComponent
+    LawfirmSignupComponent,
+    SharedComponent,
   ]
 })
-export class SharedModule { }
+export class SharedModule {}

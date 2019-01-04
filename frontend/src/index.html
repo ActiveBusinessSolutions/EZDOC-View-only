@@ -47,6 +47,7 @@
 
   <link href="assets/common/css/common.css" rel="stylesheet" type="text/css" />
   <link href="assets/common/css/form-page.css" rel="stylesheet" type="text/css" />
+  <link href="assets/pages/css/error.min.css" rel="stylesheet" type="text/css" />
 
   <!-- BEGIN PAGE LEVEL STYLES -->
   <link href='assets/pages/css/login-3.min.css' rel="stylesheet" type="text/css" />
@@ -69,7 +70,14 @@
           <h1 class="CPRO">C Pro</h1>
         </div>
       </div>
+      <p id="wait">Please wait...</p>
     </div>
+    <script>
+      if (localStorage.getItem('token') == null) {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("wait").style.display = "none";
+      }
+    </script>
   </app-root>
   <div class="loading" style="display: none">Loading...</div>
   <!--[if lt IE 9]>

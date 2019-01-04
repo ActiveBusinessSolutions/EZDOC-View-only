@@ -14,7 +14,10 @@
                 <div class="portlet-title">
                   <div class="caption font-dark-sunglo">
                     <img src="/assets/common/img/icons/edit.png" class="img-icon" />&nbsp;
-                    <span class="caption-subject bold uppercase" *ngIf="client != null">
+                    <span class="caption-subject bold uppercase" *ngIf="client != null && form_wizard == '1'">
+                      Client Details
+                    </span>
+                    <span class="caption-subject bold uppercase" *ngIf="client != null && form_wizard == '0'">
                       {{ client.first_name }} {{ client.last_name }}<span *ngIf="form != null">, {{form.type}}</span>
                     </span>
                   </div>
@@ -26,9 +29,6 @@
                         </button>
                         <button *ngIf="!form_wizard" class="btn red" (click)="print()">
                           <i class="fa fa-file-pdf-o"></i> Save as PDF
-                        </button>
-                        <button *ngIf="form_wizard" class="btn green" (click)="submitDoc()">
-                          <i class="fa fa-check"></i> Submit
                         </button>
                         <button *ngIf="!form_wizard" class="btn green" (click)="submitDoc()">
                           <i class="fa fa-save"></i> Save
@@ -43,6 +43,9 @@
                   </div>
                   <div class="margin-bottom-20">
                     <app-form-doc [client_id]="client_id" [form_id]="form_id" [page_index]="currentPage"></app-form-doc>
+                    <div *ngIf="form_wizard" class="text-center" style="margin: 25px 10px -10px 10px">
+                      <button class="btn green wide" (click)="submitDoc()">Save</button>
+                    </div>
                   </div>
                   <div class="row doc-page-controls" style="display: none">
                     <div class="col-md-12">

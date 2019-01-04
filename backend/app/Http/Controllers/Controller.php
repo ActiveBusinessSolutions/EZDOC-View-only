@@ -20,21 +20,27 @@ class Controller extends BaseController
   {
   }
 
-  public function isSuperAdmin(Request $request)
+  public function current_user(Request $request)
   {
     $user = \JWTAuth::toUser($request->input('token'));
+    return $user;
+  }
+
+  public function isSuperAdmin(Request $request)
+  {
+    $user = $this->current_user($request);
     return $user->is('superadmin');
   }
 
   public function isAdmin(Request $request)
   {
-    $user = \JWTAuth::toUser($request->input('token'));
+    $user = $this->current_user($request);
     return $user->is('superadmin') || $user->is('admin');
   }
 
   public function isMe(Request $request, $id)
   {
-    $user = \JWTAuth::toUser($request->input('token'));
+    $user = $this->current_user($request);
     if (is_null($user) || !isset($user->id)) {
       return false;
     }

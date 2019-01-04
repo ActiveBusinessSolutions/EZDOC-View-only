@@ -27,13 +27,14 @@ class LawfirmsRequest extends Request
     public function rules()
     {
       return [
-        'name' => 'required|min:2',
-        'address' => 'required|min:2',
-        'city' => 'required|min:2',
-        'state' => 'required|min:2',
-        'zip' => 'required|min:2',
-        'phone_number' => 'required|min:2',
-        'fax_number' => 'required|min:2',
+        'name' => 'required',
+        'country' => 'required',
+        'state' => 'required',
+        'province' => 'required',
+        'city' => 'required',
+        'street' => 'required',
+        'zip_code' => 'required',
+        'postal_code' => 'required',
       ];
     }
 }

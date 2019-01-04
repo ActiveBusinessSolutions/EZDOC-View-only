@@ -49,28 +49,17 @@ export class AdminUserComponent implements OnInit {
               'title': 'Name',
               'data': 'name'
             }, {
-              'title': 'Gender',
-              'data': 'gender'
-            }, {
-              'title': 'Birth Date',
-              'data': 'american_birth_date'
-            }, {
               'title': 'Email',
               'data': 'email'
             }, {
-              'title': 'Phone Number',
-              'data': 'phone_number'
+              'title': 'Telephone Number',
+              'data': 'telephone_number'
+            }, {
+              'title': 'Mobile Number',
+              'data': 'mobile_number'
             }, {
               'title': 'Status',
               'data': 'status_html'
-            }, {
-              'title': 'Date of Birth',
-              'data': 'american_dash_birth_date',
-            }
-          ], "columnDefs": [
-            {
-              "targets": [6],
-              "visible": false
             }
           ]
         });
@@ -129,14 +118,11 @@ export class AdminUserComponent implements OnInit {
           let row = this.users[i];
           row.DT_RowId = row.id;
           row.name = row.profile.first_name + ' ' + row.profile.last_name;
-          row.gender = row.profile.gender;
-          row.birth_date = row.profile.birthday;
-          row.phone_number = row.profile.phone;
+          row.telephone_number = row.profile.telephone_number;
+          row.mobile_number = row.profile.mobile_number;
           row.status_html = row.status == 'approved'
             ? '<span class="badge badge-success">Approved</span>'
             : '<span class="badge badge-danger">Dismissed</span>';
-          row.american_birth_date = Common.americanDate(row.birth_date);
-          row.american_dash_birth_date = Common.americanDate(row.birth_date, "-");
         }
         console.log('users', this.users);
 

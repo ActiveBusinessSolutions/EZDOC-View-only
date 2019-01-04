@@ -8,6 +8,7 @@ import "../../../../assets/plugins/jqwidgets/jqxdata.js"
 import "../../../../assets/plugins/jqwidgets/jqxbuttons.js"
 import "../../../../assets/plugins/jqwidgets/jqxscrollbar.js"
 import "../../../../assets/plugins/jqwidgets/jqxlistbox.js"
+import { StaticData } from 'app/static-data';
 
 declare let $;
 declare let App;
@@ -28,6 +29,7 @@ export class AdminLawfirmComponent implements OnInit {
   static instance: AdminLawfirmComponent;
   private lawfirms;
   private count;
+  lawfirm: Lawfirm = new Lawfirm();
 
   constructor(private _lawfirmService: LawfirmService) {
     AdminLawfirmComponent.instance = this;
@@ -50,6 +52,20 @@ export class AdminLawfirmComponent implements OnInit {
           width: '100%',
           height: 400
         });
+
+        $('#countrySelector').jqxComboBox({
+          theme: 'metro',
+          source: StaticData.countries,
+          width: '100%',
+          height: 32
+        });
+
+        $('#stateSelector').jqxComboBox({
+          theme: 'metro',
+          source: StaticData.states,
+          width: '100%',
+          height: 32
+        });
       }
 
       function InitEvents() {
@@ -60,8 +76,25 @@ export class AdminLawfirmComponent implements OnInit {
     });
   }
 
+  onAptTypeChanged(event, type) {
+    event.preventDefault();
+
+    this.lawfirm.apartment = false;
+    this.lawfirm.suite = false;
+    this.lawfirm.floor = false;
+
+    if (type == "apartment") {
+      this.lawfirm.apartment = true;
+    } else if (type == "suite") {
+      this.lawfirm.suite = true;
+    } else {
+      this.lawfirm.floor = true;
+    }
+  }
+
   getLawfirms() {
     $('.loading').show();
+    let selected_id = $('#lawfirmList').val();
 
     this._lawfirmService.getLawfirms()
       .subscribe(data => {
@@ -82,8 +115,12 @@ export class AdminLawfirmComponent implements OnInit {
 
         $("#lawfirmList").jqxListBox({
           source: dataAdapter,
-          selectedIndex: 0,
         });
+        if(Common.isNone(selected_id)) {
+          $("#lawfirmList").jqxListBox('selectedIndex', 0);
+        } else {
+          $("#lawfirmList").val(selected_id);
+        }
 
         $('.loading').fadeOut();
       });
@@ -102,45 +139,20 @@ export class AdminLawfirmComponent implements OnInit {
 
   refreshForm() {
     let id = $('#lawfirmList').val();
-    let lawfirm = this.getLawfirmById(id);
-
-    $('#lawfirmNameInput').val(lawfirm.name);
-    $('#lawfirmPasswordInput').val('');
-    $('#lawfirmAddressInput').val(lawfirm.address);
-    $('#lawfirmCityInput').val(lawfirm.city);
-    $('#lawfirmStateInput').val(lawfirm.state);
-    $('#lawfirmZipInput').val(lawfirm.zip);
-    $('#lawfirmPhoneNumberInput').val(lawfirm.phone_number);
-    $('#lawfirmFaxNumberInput').val(lawfirm.fax_number);
+    this.lawfirm = this.getLawfirmById(id);
+    $("#countrySelector").val(this.lawfirm.country);
+    $("#stateSelector").val(this.lawfirm.state);
+    console.log(this.lawfirm);
   }
 
   resetForm() {
-    $('#lawfirmNameInput').val('');
-    $('#lawfirmPasswordInput').val('');
-    $('#lawfirmAddressInput').val('');
-    $('#lawfirmCityInput').val('');
-    $('#lawfirmStateInput').val('');
-    $('#lawfirmZipInput').val('');
-    $('#lawfirmPhoneNumberInput').val('');
-    $('#lawfirmFaxNumberInput').val('');
+    this.lawfirm = new Lawfirm();
+    $("#countrySelector").val(this.lawfirm.country);
+    $("#stateSelector").val(this.lawfirm.state);
   }
-
-  createLawfirm() {
-    let lawfirm = this.getLawfirm();
-
-    this._lawfirmService.createLawfirm(lawfirm)
-      .subscribe(data => {
-        let message = data.success.message;
-        Notification.notifyAny({message: message});
-        this.getLawfirms();
-      });
-  }
-
+  
   updateLawfirm() {
-    let lawfirm = this.getLawfirm();
-    lawfirm['id'] = $('#lawfirmList').val();
-
-    this._lawfirmService.updateLawfirm(lawfirm)
+    this._lawfirmService.updateLawfirm(this.lawfirm)
       .subscribe(data => {
         let message = data.success.message;
         Notification.notifyAny({message: message});
@@ -150,28 +162,15 @@ export class AdminLawfirmComponent implements OnInit {
 
   deleteLawfirm() {
     let id = $('#lawfirmList').val();
+    let self = this;
 
     Common.confirm('Do you want to delete the lawfirm?', function () {
-      AdminLawfirmComponent.instance._lawfirmService.deleteLawfirm(id)
+      self._lawfirmService.deleteLawfirm(id)
         .subscribe(data => {
           let message = data.success.message;
           Notification.notifyAny({message: message});
-          AdminLawfirmComponent.instance.getLawfirms();
+          self.getLawfirms();
         });
     });
-  }
-
-  getLawfirm() {
-    let lawfirm = new Lawfirm();
-    lawfirm.name = $('#lawfirmNameInput').val();
-    lawfirm.password = $('#lawfirmPasswordInput').val();
-    lawfirm.address = $('#lawfirmAddressInput').val();
-    lawfirm.city = $('#lawfirmCityInput').val();
-    lawfirm.state = $('#lawfirmStateInput').val();
-    lawfirm.zip = $('#lawfirmZipInput').val();
-    lawfirm.phone_number = $('#lawfirmPhoneNumberInput').val();
-    lawfirm.fax_number = $('#lawfirmFaxNumberInput').val();
-
-    return lawfirm;
   }
 }

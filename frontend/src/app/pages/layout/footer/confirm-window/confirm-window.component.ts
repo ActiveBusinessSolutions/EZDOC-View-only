@@ -29,6 +29,7 @@ export class ConfirmWindowComponent implements OnInit {
       $('#confirmWindow').jqxWindow({
         theme: 'bootstrap',
         width: 350,
+        height: 120,
         resizable: false,
         isModal: true,
         modalOpacity: 0.6,

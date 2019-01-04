@@ -30,7 +30,7 @@
   /* padding: 40px 20px; */
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
@@ -45,7 +45,7 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(120, 120, 120);
-}
+} */
 
 .doc-page-content {
   margin-left: auto;
@@ -404,4 +404,9 @@ p {
 
 .i485-small * {
   font-size: 18px !important;
+}
+
+.create-client-body {
+  margin-top: -10px;
+  padding: 0 15px;
 }

@@ -21,4 +21,9 @@ class Doc extends Model
   {
     return $this->belongsTo(Form::class, 'form_id');
   }
+
+  public function user()
+  {
+    return $this->belongsTo(User::class, 'user_id');
+  }
 }

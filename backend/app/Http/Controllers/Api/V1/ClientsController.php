@@ -217,7 +217,8 @@ class ClientsController extends Controller
   {
     $inputs = $request->all();
     $data = $this->buildClient($inputs['data']);
-
+    
+    
     $user = \JWTAuth::toUser($inputs['token']);
     $data['client']->user_id = $user->id;
     $data['client']->lawfirm_id = $user->profile->lawfirm->id;

@@ -61,8 +61,8 @@ export class AdminFormSchemaComponent implements OnInit {
       InitEvents();
 
       function InitWidgets() {
-        console.log('ok');
-        $('.form-container').css('max-height', '5000px');
+        // console.log('ok');
+        $('.form-container').css('max-height', '6000px');
 
         $('#formSelector').jqxDropDownList({
           theme: 'metro',
@@ -79,8 +79,6 @@ export class AdminFormSchemaComponent implements OnInit {
         });
         $('#schemaTree').jqxTree({
           theme: 'metro',
-          width: '100%',
-          height: 600
         });
         $('#validationTypeSelector').jqxDropDownList({
           theme: 'metro',
@@ -123,15 +121,27 @@ export class AdminFormSchemaComponent implements OnInit {
         $('#formSelector').on('select', function (event) {
           if (event.args) {
             let id = event.args.item.value;
-            AdminFormSchemaComponent.instance.getForm(id);
-            localStorage.setItem('form.id', id);
+            let oldForm = localStorage.getItem('form.id');
+            if(id != oldForm) {
+              localStorage.setItem('form.id', id);
+              localStorage.setItem("page.index", "1");
+              window.location.reload();
+            } else {
+              AdminFormSchemaComponent.instance.getForm(id);
+            }
           }
         });
         $('#pageSelector').on('select', function (event) {
           if (event.args) {
             let index = event.args.item.value;
-            AdminFormSchemaComponent.instance.selectPage(index);
-            localStorage.setItem('page.index', index);
+            // AdminFormSchemaComponent.instance.selectPage(index);
+            let oldPage = localStorage.getItem("page.index");
+            if(index != oldPage) {
+              localStorage.setItem('page.index', index);
+              window.location.reload();
+            } else {
+              AdminFormSchemaComponent.instance.selectPage(index);
+            }
           }
         });
         $('#schemaTree').on('click', function (event) {
@@ -261,23 +271,33 @@ export class AdminFormSchemaComponent implements OnInit {
   }
 
   refreshTree() {
+    var copySchema = [];
+    for(var i in this.schema) {
+      var row = Common.copyItem(this.schema[i]);
+      row['type_key'] = row['type'];
+      if(!Common.isNone(row['key'])) {
+        row['type_key'] += '(' + row['key'] + ')';
+      }
+      copySchema.push(row);
+    }
+    // console.log(this.schema, copySchema);
     let source =
       {
         datatype: "json",
         datafields: [
           {name: 'id'},
           {name: 'parent_id'},
-          {name: 'type'},
+          { name: 'type_key'},
         ],
         id: 'id',
-        localdata: this.schema
+      localdata: copySchema
       };
 
     let dataAdapter = new $.jqx.dataAdapter(source);
     dataAdapter.dataBind();
     let records = dataAdapter.getRecordsHierarchy(
       'id', 'parent_id', 'items', [
-        {name: 'type', map: 'label'},
+        { name: 'type_key', map: 'label'},
         {name: 'id', map: 'value'}
       ]);
     $('#schemaTree').jqxTree({source: records});
@@ -349,7 +369,9 @@ export class AdminFormSchemaComponent implements OnInit {
       }
       this.schema = new_schema;
 
-      this.onItemChanged();
+      // TODO: Test code
+      // this.onItemChanged(); 
+      $("#cellModal").modal("hide");
     }
   }
 
@@ -378,8 +400,8 @@ export class AdminFormSchemaComponent implements OnInit {
       console.log(item);
 
       // TODO : Test code here
-      // $("#cellModal").modal('hide');
-      this.onItemChanged();
+      // this.onItemChanged();
+      $("#cellModal").modal('hide');
     }
   }
 

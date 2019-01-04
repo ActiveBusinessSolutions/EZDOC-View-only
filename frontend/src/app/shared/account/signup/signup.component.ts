@@ -14,6 +14,7 @@ import "../../../../assets/plugins/jqwidgets/jqxbuttons.js"
 import "../../../../assets/plugins/jqwidgets/jqxscrollbar.js"
 import "../../../../assets/plugins/jqwidgets/jqxlistbox.js"
 import "../../../../assets/plugins/jqwidgets/jqxcombobox.js"
+import { StaticData } from 'app/static-data';
 
 declare let $;
 declare let bootbox;
@@ -62,25 +63,38 @@ export class SignupComponent implements OnInit {
     this.role = "attorney";
     this.user = new User();
     this.profile = new Profile();
-    this.profile.gender = "male";
-    this.profile.birthday = Common.getPhpDate(new Date());
-
+    this.profile.accereditation_expires_date = Common.getPhpDate(new Date());
+    this.profile.is_attorney = true;
+    this.profile.is_subject_to_any = false;
+    
     // DEBUG: Test code here
     this.profile.first_name = faker.name.findName().split(" ")[0];
+    this.profile.middle_name = faker.name.findName().split(" ")[1];
     this.profile.last_name = faker.name.findName().split(" ")[1];
-    this.profile.phone = faker.phone.phoneNumber();
+    this.profile.telephone_number = faker.phone.phoneNumber();
+    this.profile.mobile_number = faker.phone.phoneNumber();
+    this.profile.fax_number = faker.phone.phoneNumber();
+    this.profile.street = faker.address.streetAddress();
+    this.profile.apt_number = "ABC123";
+    this.profile.city = faker.address.city();
+    // this.profile.state = faker.address.state();
+    this.profile.zip_code = faker.address.zipCode();
+    this.profile.province = faker.address.state();
+    // this.profile.country = faker.address.country();
+    this.profile.uscis_account_number = "123456789";
+    this.profile.licensing_authority = faker.company.companyName();
+    this.profile.bar_number = "684516843";
+    this.profile.preparer_signature = "321543872";
     this.user.password = '123456';
     this.retype_password = '123456';
-    this.profile.EOIR = 'abc123456';
-    this.profile.state_bar_number = 'abc123456';
     this.lawfirm_password = '123456';
 
     this.getLawfirms();
     this.getCaptcha();
-    this.getAllInvites();
   }
 
   ngAfterViewInit() {
+    let self = this;
     this.profile.lawfirm_id = 1;
 
     InitWidgets();
@@ -94,24 +108,57 @@ export class SignupComponent implements OnInit {
         itemHeight: 30,
       });
 
-      $('#emailSelector').jqxComboBox({
+      $('#countrySelector').jqxComboBox({
         theme: 'metro',
-        displayMember: "email",
-        valueMember: "email",
+        source: StaticData.countries,
         width: '100%',
-        height: 33
+        height: 33,
+        itemHeight: 30,
+      });
+
+      $('#stateSelector').jqxComboBox({
+        theme: 'metro',
+        source: StaticData.states,
+        width: '100%',
+        height: 33,
+        itemHeight: 30,
       });
     }
 
     function InitEvents() {
-      $('#emailSelector').on('select', function (event) {
-        SignupComponent.instance.emailChanged();
+      $("#isSubjectCheck").change(function() {
+        self.profile.is_subject_to_any = $(this)[0].checked;
       });
+
+      $('#countrySelector').on('select', function (event) {
+        self.profile.country = $(this).val();
+      });
+
+      $('#stateSelector').on('select', function (event) {
+        self.profile.state = $(this).val();
+      });
+    }
+  }
+
+  onAptTypeChanged(event, type) {
+    event.preventDefault();
+
+    this.profile.apartment = false;
+    this.profile.suite = false;
+    this.profile.floor = false;
+
+    if (type == 'apartment') {
+      this.profile.apartment = true;
+    } else if (type == 'suite') {
+      this.profile.suite = true;
+    } else {
+      this.profile.floor = true;
     }
   }
 
   SelectRole(role) {
     this.role = role;
+    this.profile.is_attorney = role == 'attorney';
   }
 
   getLawfirms() {
@@ -138,6 +185,14 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit(form) {
+    if (Common.isNone(this.profile.country)) {
+      Notification.notifyAny({ message: 'Please select the country!', type: 'error' });
+      return;
+    }
+    if (Common.isNone(this.profile.state)) {
+      Notification.notifyAny({ message: 'Please select the state!', type: 'error' });
+      return;
+    }
     this._userService.checkCaptcha(this.captcha_value, this.captcha_key)
       .subscribe(data => {
         if (data.json().success) {
@@ -147,13 +202,12 @@ export class SignupComponent implements OnInit {
           };
           this.profile.lawfirm_id = lawfirm.id;
           if (this.user.password != this.retype_password) {
-            Notification.notifyAny({message: "Retype password exactly."});
+            Notification.notifyAny({ message: "Confirm password does not match!", type: 'error'});
             return;
           }
 
           this._lawfirmService.confirmLawfirm(lawfirm)
             .subscribe(success => {
-              this.user.email = $('#emailSelector').val();
               console.log(this.user.email);
               $('.loading').show();
 
@@ -186,7 +240,7 @@ export class SignupComponent implements OnInit {
         else {
           this.captcha_image = data.json().img;
           this.captcha_key = data.json().key;
-          Notification.notifyAny({message: 'Type the correct captcha.'});
+          Notification.notifyAny({ message: 'Type the correct captcha!', type: 'error'});
           $('#captcha').val('');
         }
       });
@@ -201,36 +255,6 @@ export class SignupComponent implements OnInit {
       .subscribe(data => {
         this.captcha_image = data.json().img;
         this.captcha_key = data.json().key;
-      });
-  }
-
-  emailChanged() {
-    let email = $('#emailSelector').val();
-    this.user.email = email;
-
-    this._inviteService.getInvitesByEmail(email)
-      .subscribe(data => {
-        if (data.length > 0) {
-          let lawfirm_id = data[0].lawfirm_id;
-          $('#lawfirmSelector').val(lawfirm_id);
-        }
-      });
-  }
-
-  getAllInvites() {
-    this._inviteService.getAllInvites()
-      .subscribe(data => {
-        let source =
-          {
-            datatype: "json",
-            datafields: [
-              {name: 'email'},
-            ],
-            localdata: data,
-          };
-        let dataAdapter = new $.jqx.dataAdapter(source);
-
-        $('#emailSelector').jqxComboBox({source: dataAdapter});
       });
   }
 }

@@ -4,10 +4,14 @@ export class Lawfirm {
     id: string;
     name: string;
     password: string;
-    address: string;
+    street: string;
+    apartment: boolean;
+    suite: boolean;
+    floor: boolean;
     city: string;
     state: string;
-    zip: string;
-    phone_number: string;
-    fax_number: string;
+    zip_code: string;
+    province: string;
+    postal_code: string;
+    country: string;
 }

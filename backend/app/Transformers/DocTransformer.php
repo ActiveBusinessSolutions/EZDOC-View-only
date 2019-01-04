@@ -35,6 +35,7 @@ class DocTransformer extends TransformerAbstract
             'id' => (int) $doc->id,
             'client_id' => (int) $doc->client_id,
             'form_id' => (int) $doc->form_id,
+            'user_id' => (int) $doc->user_id,
             'page_count' => (int) $doc->form->page_count,
             'form_type' => (string) $doc->form->type,
             'form_name' => (string) $doc->form->name,

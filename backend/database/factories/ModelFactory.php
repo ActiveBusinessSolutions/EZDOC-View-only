@@ -22,13 +22,30 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 $factory->define(App\Models\Profile::class, function (Faker\Generator $faker) {
   return [
     'first_name' => $faker->firstName,
+    'middle_name' => $faker->lastName,
     'last_name' => $faker->lastName,
-    'phone' => $faker->phoneNumber,
-    'birthday' => $faker->date('Y-m-d'),
-    'gender' => sprintf("%s", $faker->randomElement(['male', 'female'])),
-    'EOIR' => $faker->company,
+    'telephone_number' => $faker->tollFreePhoneNumber,
+    'mobile_number' => $faker->phoneNumber,
+    'fax_number' => $faker->phoneNumber,
+    'street' => $faker->streetAddress,
+    'apartment' => random_int(0, 1),
+    'suite' => random_int(0, 1),
+    'floor' => random_int(0, 1),
+    'apt_number' => $faker->buildingNumber,
+    'city' => $faker->city,
+    'state' => $faker->stateAbbr,
+    'zip_code' => $faker->buildingNumber,
+    'province' => $faker->state,
+    'country' => $faker->country,
+    'uscis_account_number' => $faker->creditCardNumber,
+    'accereditation_expires_date' => $faker->date('Y-m-d'),
+    'is_attorney' => random_int(0, 1),
+    'licensing_authority' => $faker->company,
+    'bar_number' => $faker->isbn13,
+    'is_subject_to_any' => random_int(0, 1),
+    'subject_explaination' => $faker->text(),
+    'preparer_signature' => $faker->word(),
     'avatar' => '../../../../assets/common/img/avatar.png',
-    'state_bar_number' => random_int(0, 100),
     'lawfirm_id' => App\Models\Lawfirm::all()->random()->id
   ];
 });
@@ -43,15 +60,23 @@ $factory->define(App\Models\Client::class, function (Faker\Generator $faker) {
     'last_name' => $faker->lastName,
     'maiden_aliase_name' => $faker->titleMale,
     'residence_street_num' => $faker->streetName,
+    'residence_apt_type' => $faker->randomElement(['apartment', 'suite', 'floor']),
     'residence_apt_num' => $faker->buildingNumber,
     'residence_city' => $faker->city,
-    'residence_state' => $faker->streetAddress,
+    'residence_state' => $faker->stateAbbr,
+    'residence_county' => $faker->cityPrefix,
+    'residence_province' => $faker->state,
+    'residence_postal_code' => $faker->postcode,
+    'residence_country' => $faker->country,
     'residence_zip_code' => $faker->countryCode,
     'residence_telephone_num' => $faker->phoneNumber,
+    'residence_mobile_num' => $faker->e164PhoneNumber,
+    'residence_email_address' => $faker->email,
     'gender' => sprintf("%s", $faker->randomElement(['male', 'female'])),
     'marital_status' => sprintf("%s", $faker->randomElement(['single', 'married', 'divorced', 'widowed'])),
     'birth_date' => $faker->date('Y-m-d'),
-    'birth_city_country' => $faker->country
+    'birth_city' => $faker->city,
+    'birth_country' => $faker->country,
   ];
 });
 
@@ -59,9 +84,14 @@ $factory->define(App\Models\ClientProfile::class, function (Faker\Generator $fak
   return [
     'mailing_address_care' => $faker->address,
     'mailing_address_street_num' => $faker->streetName,
+    'mailing_address_apt_type' => $faker->randomElement(['apartment', 'suite', 'floor']),
     'mailing_address_apt_num' => $faker->buildingNumber,
     'mailing_address_city' => $faker->city,
-    'mailing_address_state' => $faker->streetAddress,
+    'mailing_address_county' => $faker->cityPrefix,
+    'mailing_address_province' => $faker->state,
+    'mailing_address_postal_code' => $faker->postCode,
+    'mailing_address_country' => $faker->country,
+    'mailing_address_state' => $faker->stateAbbr,
     'mailing_address_zip_code' => $faker->countryCode,
     'mailing_address_telephone_num' => $faker->phoneNumber,
     'nationality_present' => $faker->country,
@@ -87,7 +117,12 @@ $factory->define(App\Models\ClientProfile::class, function (Faker\Generator $fak
     'passport_expiration_date' => $faker->date('Y-m-d'),
     'language_native' => $faker->country,
     'language_english_fluent' => true,
-    'language_other' => $faker->country
+    'language_other' => $faker->country,
+    'lawfirm_permanent_resident' => $faker->date('Y-m-d'),
+    'residence_current_address_from' => $faker->date('Y-m-d'),
+    'residence_current_address_to' => $faker->date('Y-m-d'),
+    'date_last_entry' => $faker->date('Y-m-d'),
+    'place_last_entry' => $faker->streetAddress,
   ];
 });
 
@@ -234,22 +269,32 @@ $factory->define(App\Models\BackgroundFamily::class, function (Faker\Generator $
   ];
 });
 $factory->define(App\Models\Doc::class, function (Faker\Generator $faker) {
+  $client = App\Models\Client::all()->random();
+  $client_id = $client->id;
+  $profile = App\Models\Profile::where('lawfirm_id', $client->lawfirm_id)->random();
+
   return [
-    'client_id' => App\Models\Client::all()->random()->id,
+    'client_id' => $client_id,
     'form_id' => App\Models\Form::all()->random()->id,
+    'user_id' => $profile->user_id,
   ];
 });
 
 $factory->define(App\Models\Lawfirm::class, function (Faker\Generator $faker) {
   return [
-    'name' => $faker->name,
+    'name' => $faker->company,
     'password' => base64_encode('123456'),
-    'address' => $faker->address,
+    'street' => $faker->streetAddress,
+    'apartment' => random_int(0, 1),
+    'suite' => random_int(0, 1),
+    'floor' => random_int(0, 1),
+    'apt_number' => $faker->word,
     'city' => $faker->city,
-    'state' => $faker->country,
-    'zip' => $faker->buildingNumber,
-    'phone_number' => $faker->phoneNumber,
-    'fax_number' => $faker->bankAccountNumber,
+    'state' => $faker->stateAbbr,
+    'zip_code' => $faker->buildingNumber,
+    'province' => $faker->state,
+    'postal_code' => $faker->postcode,
+    'country' => $faker->country,
   ];
 });
 

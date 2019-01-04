@@ -31,85 +31,185 @@
                 <div class="tab-content">
                   <!-- PERSONAL INFO TAB -->
                   <div class="tab-pane active" id="tab_1_1">
+                    <div *ngIf="profile" style="display: flex; margin-bottom: 20px;">
+                      <div>
+                        <img *ngIf="avatarExist" src="{{profile.avatar}}" height="100px">
+                        <span *ngIf="!avatarExist">
+                          <avatar [name]="fullName" [displayType]="circle" size="100" [background]="avatarBackground"></avatar>
+                        </span>
+                      </div>
+                      <div style="margin-left: 20px;">
+                        <label>{{ fullName }},&nbsp;</label>
+                        <br>
+                        <label class="small bold"><i class="fa fa-map-marker"></i> {{ profile.city }}, {{ profile.country }}</label>
+                        <div style="margin-bottom: 10px;"></div>
+                        <label *ngIf="user.role == 'superadmin'" class="badge badge-danger">Super Admin</label>
+                        <label *ngIf="user.role == 'admin'" class="badge badge-primary">Admin</label>
+                        <label *ngIf="user.role == 'attorney'" class="badge badge-success">Attorney</label>
+                        <label *ngIf="user.role == 'paralegal'" class="badge badge-light">Paralegal</label>
+                      </div>
+                    </div>
                     <form *ngIf="profile" role="form" method="PATCH" id="submit_form1" #saveProfileForm="ngForm"
                           (ngSubmit)="onSubmit(saveProfileForm)">
                       <div class="row">
                         <div class="col-xs-6 col-md-6">
-                          <div class="form-group">
-                            <label class="control-label">First Name</label>
-                            <input name="first_name" type="text" placeholder="First Name" class="form-control"
-                                   [(ngModel)]="profile.first_name" required>
-                          </div>
-                          <div class="form-group">
-                            <label class="control-label">Last Name</label>
-                            <input name="last_name" type="text" placeholder="Last Name" class="form-control"
-                                   [(ngModel)]="profile.last_name" required>
-                          </div>
-                          <div class="form-group">
-                            <label class="control-label">Phone Number</label>
-                            <input name="phonenumber" type="text" placeholder="865-23-4567" class="form-control"
-                                   [(ngModel)]="profile.phone" required>
-                          </div>
-                          <div *ngIf="email" class="form-group">
-                            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
-                            <label class="control-label">Email</label>
-                            <div class="input-icon">
-                              <i class="fa fa-envelope"></i>
-                              <input name="email" class="form-control placeholder-no-fix" type="text"
-                                     placeholder="tense@window.com" [(ngModel)]="email" readonly required/>
-                            </div>
-                          </div>
-                          <div class="form-group">
-                            <label class="control-label">Date of Birth</label>
-                            <input name="dob" type="date" class="form-control" [(ngModel)]="profile.birthday" required>
-                          </div>
-                          <div class="margin-bottom-10">
-                            <div class="col-sm-3 margin-top-10">
-                              Gender
-                            </div>
-                            <div class="col-sm-9">
-                              <div class="mt-radio-inline">
-                                <label class="mt-radio">
-                                  <input name="gender" type="radio" value="male" [(ngModel)]="profile.gender"> Male
-                                  <span></span>
-                                </label>
-                                <label class="mt-radio">
-                                  <input name="gender" type="radio" value="female" [(ngModel)]="profile.gender"> Female
-                                  <span></span>
-                                </label>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-xs-6 col-md-6">
-                          <div class="form-group">
-                            <label class="control-label">EOIR</label>
-                            <input type="text" name="EOIR" placeholder="EOIR Here" class="form-control"
-                                   [(ngModel)]="profile.EOIR" required>
-                          </div>
-                          <div class="form-group">
-                            <label class="control-label">State Bar Number</label>
-                            <input type="text" name="state_bar_number" placeholder="678-98" class="form-control"
-                                   [(ngModel)]="profile.state_bar_number" required>
-                          </div>
                           <div *ngIf="lawfirm_name" class="form-group">
                             <label class="control-label">Law Firm Name</label>
                             <div class="input-icon">
                               <i class="fa fa-legal"></i>
-                              <input type="text" name="lawfirm_name" placeholder="EZ Law Company" class="form-control"
+                              <input type="text" name="lawfirm_name" placeholder="" class="form-control" [ngModelOptions]="{standalone: true}"
                                      [(ngModel)]="lawfirm_name" readonly required>
                             </div>
                           </div>
+                          <div *ngIf="email" class="form-group">
+                            <label class="control-label">Email</label>
+                            <div class="input-icon">
+                              <i class="fa fa-envelope"></i>
+                              <input name="email" class="form-control placeholder-no-fix" type="text" [ngModelOptions]="{standalone: true}"
+                                     placeholder="tense@window.com" [(ngModel)]="email" readonly required/>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">First Name</label>
+                            <input name="first_name" type="text" placeholder="" class="form-control" [ngModelOptions]="{standalone: true}"
+                                   [(ngModel)]="profile.first_name" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Middle Name</label>
+                            <input name="middle_name" type="text" placeholder="" class="form-control" [ngModelOptions]="{standalone: true}"
+                                   [(ngModel)]="profile.middle_name" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Last Name</label>
+                            <input name="last_name" type="text" placeholder="" class="form-control" [ngModelOptions]="{standalone: true}"
+                                   [(ngModel)]="profile.last_name" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Telephone Number</label>
+                            <input name="telephone_number" type="text" placeholder="" class="form-control" [ngModelOptions]="{standalone: true}"
+                                   [(ngModel)]="profile.telephone_number" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Mobile Number</label>
+                            <input name="mobile_number" type="text" placeholder="" class="form-control" [ngModelOptions]="{standalone: true}"
+                                   [(ngModel)]="profile.mobile_number" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Fax Number</label>
+                            <input name="fax_number" type="text" placeholder="" class="form-control" [ngModelOptions]="{standalone: true}"
+                                   [(ngModel)]="profile.fax_number" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Zip Code</label>
+                            <input class="form-control" type="text" placeholder="" name="zip_code" [(ngModel)]="profile.zip_code"
+                              [ngModelOptions]="{standalone: true}" required />
+                          </div>
+                          <div class="form-group">
+                            <label>Date accreditation expires</label>
+                            <input class="form-control" type="date" name="accereditation_expires_date" [(ngModel)]="profile.accereditation_expires_date"
+                              [ngModelOptions]="{standalone: true}" required />
+                          </div>
+                          <div class="form-group">
+                            <label>Licensing Authority</label>
+                            <input class="form-control" type="text" placeholder="Licensing Authority" name="licensing_authority" [(ngModel)]="profile.licensing_authority"
+                              [ngModelOptions]="{standalone: true}" required />
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">State Bar Number</label>
+                            <input type="text" name="bar_number" placeholder="678-98" class="form-control"
+                                   [(ngModel)]="profile.bar_number" required>
+                          </div>
+                        </div>
+                        <div class="col-xs-6 col-md-6">
+                          <div class="form-group">
+                            <label class="control-label">Country</label>
+                            <input type="text" class="form-control" placeholder="" name="country" [(ngModel)]="profile.country" [ngModelOptions]="{standalone: true}"
+                              readonly required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">State</label>
+                            <input type="text" class="form-control" placeholder="" name="state" [(ngModel)]="profile.state" [ngModelOptions]="{standalone: true}"
+                              readonly required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Street</label>
+                            <input class="form-control" type="text" placeholder="" name="street" [(ngModel)]="profile.street"
+                                   [ngModelOptions]="{standalone: true}"  required />
+                          </div>
+                          <div class="form-group margin-top-20">
+                            <table>
+                              <tr>
+                                <td>Apt.</td>
+                                <td>Ste.</td>
+                                <td>Flr.</td>
+                                <td>Number</td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <label class="mt-checkbox mt-checkbox-outline">
+                                    <input type="checkbox" name="apartment" [(ngModel)]="profile.apartment" 
+                                      [ngModelOptions]="{standalone: true}" (change)="onAptTypeChanged($event, 'apartment')" />
+                                    <span></span>
+                                  </label>
+                                </td>
+                                <td>
+                                  <label class="mt-checkbox mt-checkbox-outline">
+                                    <input type="checkbox" name="suite" [(ngModel)]="profile.suite" 
+                                      [ngModelOptions]="{standalone: true}" (change)="onAptTypeChanged($event, 'suite')" />
+                                    <span></span>
+                                  </label>
+                                </td>
+                                <td>
+                                  <label class="mt-checkbox mt-checkbox-outline">
+                                    <input type="checkbox" name="floor" [(ngModel)]="profile.floor" 
+                                      [ngModelOptions]="{standalone: true}" (change)="onAptTypeChanged($event, 'floor')" />
+                                    <span></span>
+                                  </label>
+                                </td>
+                                <td>
+                                  <input class="form-control" type="text" placeholder="Apartment Number" name="apt_number" [(ngModel)]="profile.apt_number"
+                                    [ngModelOptions]="{standalone: true}" required />
+                                </td>
+                              </tr>
+                            </table>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">City</label>
+                            <input type="text" class="form-control" placeholder="City" name="city" [(ngModel)]="profile.city" [ngModelOptions]="{standalone: true}"
+                              required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Province</label>
+                            <input type="text" class="form-control" placeholder="" name="province"
+                              [(ngModel)]="profile.province" [ngModelOptions]="{standalone: true}" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">USCIS Account Number</label>
+                            <input type="text" name="uscis_account_number" placeholder="USCIS Number" class="form-control"
+                                   [(ngModel)]="profile.uscis_account_number" required>
+                          </div>
+                          <div class="form-group">
+                            <label class="mt-checkbox mt-checkbox-outline">
+                              <input id="isSubjectCheck" type="checkbox" name="is_subject_to_any" [(ngModel)]="profile.is_subject_to_any"
+                                [ngModelOptions]="{standalone: true}" />
+                              &nbsp;I AM subject to any order suspending, enjoining, restraining, disbarring, or otherwise restricting me in the
+                              practice of law
+                              <span></span>
+                            </label>
+                            <textarea *ngIf="profile.is_subject_to_any" rows="5" class="form-control" type="text" placeholder="Please explain..." name="subject_explaination"
+                              [(ngModel)]="profile.subject_explaination" [ngModelOptions]="{standalone: true}" required></textarea>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label">Signature of Preparer</label>
+                            <input class="form-control" type="text" placeholder="" name="preparer_signature" [(ngModel)]="profile.preparer_signature"
+                              [ngModelOptions]="{standalone: true}" required />
+                          </div>
                         </div>
                       </div>
-                      <div class="row">
-                        <div class="col-xs-8 col-sm-10 col-md-10">
-                        </div>
-                        <div class="col-xs-4 col-sm-2 col-md-2">
-                          <button class="btn green pull-right" type="submit"><i class="fa fa-save"></i> Save</button>
-                        </div>
+                      <hr>
+                      <div class="text-center" style="margin-bottom: 5px;">
+                        <button class="btn green wide" type="submit">Save</button>
                       </div>
-
                     </form>
                   </div>
                   <!-- END PERSONAL INFO TAB -->

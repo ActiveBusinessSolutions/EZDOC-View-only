@@ -53,21 +53,9 @@ export class ProfileService {
 
   saveProfile(profile: Profile) {
 
-    let body = {
-      first_name: profile.first_name,
-      last_name: profile.last_name,
-      phone: profile.phone,
-      birthday: profile.birthday,
-      gender: profile.gender,
-      EOIR: profile.EOIR,
-      state_bar_number: profile.state_bar_number,
-      user_id: profile.user_id,
-      lawfirm_id: profile.lawfirm_id,
-      avatar: profile.avatar,
-      token: Common.getUser().token,
-    };
+    let body = profile;
     let url = this._profileUrl + '/' + profile.id + '?token=' + Common.getUser().token;
-
+    
     return this.http.put(url, body)
       .map((response: Response) => response.json())
       .do(data => data)

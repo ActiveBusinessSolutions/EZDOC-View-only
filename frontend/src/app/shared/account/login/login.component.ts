@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
           if (success.code == '201') {
             Common.SetUser(success);
             Common.login();
-            window.history.back();
+            this.router.navigate(['/pages/client/list']);
           }
           else {
             this.router.navigate(['/account/login']);

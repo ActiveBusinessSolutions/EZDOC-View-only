@@ -284,3 +284,7 @@ border-color: #ff483b !important;
     padding-right: 35px;
   }
 }
+
+.d-flex {
+  display: flex;
+}

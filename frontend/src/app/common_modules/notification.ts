@@ -143,10 +143,6 @@ export class Notification {
       type = Notification.getNotifyType(response);
       message = `${response.status}` + ' - ' + res.message;
       title = `${response.statusText}`;
-      if(response.status == 0) {
-        message = 'Server connection failed.';
-        title = 'Server';
-      }
     } else {
       resMsg = response.message ? response.message : response.toString();
       type = 'info';

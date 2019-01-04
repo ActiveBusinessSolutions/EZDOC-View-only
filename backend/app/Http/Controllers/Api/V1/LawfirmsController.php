@@ -28,21 +28,30 @@ class LawfirmsController extends Controller
 		);
 	}
 
-	public function store(LawfirmsRequest $request)
+	public function store(Request $request)
 	{
-		$lawfirm = new Lawfirm();
-		$lawfirm->name = $request->name;
-		$lawfirm->address = $request->address;
-		$lawfirm->city = $request->city;
-		$lawfirm->state = $request->state;
-		$lawfirm->zip = $request->zip;
-		$lawfirm->phone_number = $request->phone_number;
-		$lawfirm->fax_number = $request->fax_number;
-
-		if (isset($request->password)) {
-			$lawfirm->password = base64_encode($request->password);
+		$input = $request->all();
+		if (isset($input['password'])) {
+			$input['password'] = base64_encode($input['password']);
+		} else {
+		  return json()->badRequestError('Set the lawfirm password!');
 		}
 
+		$lawfirm = new Lawfirm();
+		$lawfirm->name = $input['name'];
+		$lawfirm->country = $input['country'];
+		$lawfirm->state = $input['state'];
+		$lawfirm->province = $input['province'];
+		$lawfirm->city = $input['city'];
+		$lawfirm->street = $input['street'];
+		$lawfirm->apartment = isset($input['apartment']) ? $input['apartment'] : 0;
+		$lawfirm->suite = isset($input['suite']) ? $input['suite'] : 0;
+		$lawfirm->floor = isset($input['floor']) ? $input['floor'] : 0;
+		$lawfirm->apt_number = $input['apt_number'];
+		$lawfirm->zip_code = $input['zip_code'];
+		$lawfirm->postal_code = $input['postal_code'];
+		$lawfirm->password = $input['password'];
+		
 		return ($lawfirm->save())
 			? json()->success('A new lawfirm has been created.')
 			: json()->badRequestError('Failed to create a lawfirm.');
@@ -60,16 +69,21 @@ class LawfirmsController extends Controller
 	{
 		$lawfirm = Lawfirm::findOrFail($id);
 		$lawfirm->name = $request->name;
-		$lawfirm->address = $request->address;
-		$lawfirm->city = $request->city;
+		$lawfirm->country = $request->country;
 		$lawfirm->state = $request->state;
-		$lawfirm->zip = $request->zip;
-		$lawfirm->phone_number = $request->phone_number;
-		$lawfirm->fax_number = $request->fax_number;
+		$lawfirm->province = $request->province;
+		$lawfirm->city = $request->city;
+		$lawfirm->street = $request->street;
+		$lawfirm->apartment = $request->apartment;
+		$lawfirm->suite = $request->suite;
+		$lawfirm->floor = $request->floor;
+		$lawfirm->apt_number = $request->apt_number;
+		$lawfirm->zip_code = $request->zip_code;
+		$lawfirm->postal_code = $request->postal_code;
 
-		if (isset($request->password)) {
-			$lawfirm->password = base64_encode($request->password);
-		}
+		// if (isset($request->password)) {
+		// 	$lawfirm->password = base64_encode($request->password);
+		// }
 
 		return ($lawfirm->save())
 			? json()->success('The lawfirm has been updated.')

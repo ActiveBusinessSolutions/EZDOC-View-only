@@ -10,6 +10,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Doc;
 use App\Transformers\DocTransformer;
 use App\Models\Client;
+use App\Models\Lawfirm;
+use App\User;
+use App\Models\Profile;
 
 class DocsController extends Controller
 {
@@ -26,6 +29,11 @@ class DocsController extends Controller
   public function store(Request $request)
   {
     $inputs = $request->all();
+    $user = $this->current_user($request);
+    if($user == null) {
+      return json()->error("You have no permission.");
+    }
+
     $data = $inputs['data'];
 
     $doc = Doc::where(['client_id' => $inputs['client_id'], 'form_id' => $inputs['form_id']])->first();
@@ -42,6 +50,7 @@ class DocsController extends Controller
     $doc = new Doc();
     $doc->client_id = $inputs['client_id'];
     $doc->form_id = $inputs['form_id'];
+    $doc->user_id = $user->id;
     $doc->data = json_encode($array);
     $doc->save();
 
@@ -98,7 +107,7 @@ class DocsController extends Controller
     ];
 
     $client = Client::withTrashed()->findOrFail($doc->client_id);
-    $profile = $client->clientProfile;
+    $client_profile = $client->clientProfile;
     $relationships = $client->clientRelationship;
     $addresses = $client->backgroundAddresses;
     $schools = $client->backgroundSchools;
@@ -109,8 +118,12 @@ class DocsController extends Controller
     $prepares = $client->clientPreparer;
     $doc_data = json_decode($doc->data);
 
+    $lawfirm = Lawfirm::withTrashed()->findOrFail($client->lawfirm_id);
+    $user = User::withTrashed()->findOrFail($doc->user_id);
+    $profile = Profile::withTrashed()->findOrFail($user->id);
+
     $data = getCollection($client, 'clients', $data);
-    $data = getCollection($profile, 'client_profiles', $data);
+    $data = getCollection($client_profile, 'client_profiles', $data);
     $data = getCollection1($relationships, 'client_relationships', 'relation_type', $data);
     $data = getCollection1($addresses, 'background_addresses', 'address_type', $data);
     $data = getCollection2($schools, 'background_schools', $data);
@@ -120,6 +133,8 @@ class DocsController extends Controller
     $data = getCollection($signature, 'client_signatures', $data);
     $data = getCollection($prepares, 'client_prepareres', $data);
     $data = getCollection3($doc_data, $data);
+    $data = getCollection($lawfirm, 'lawfirms', $data);
+    $data = getCollection($profile, 'profiles', $data);
 
     return $data;
   }
@@ -154,6 +169,7 @@ class DocsController extends Controller
   {
     $client_id = $request->input('client_id');
     $form_ids = $request->input('ids');
+    $current_user = $this->current_user($request);
     foreach ($form_ids as $form_id) {
       $doc = Doc::onlyTrashed()
         ->where('client_id', $client_id)
@@ -167,6 +183,7 @@ class DocsController extends Controller
         $doc = new Doc;
         $doc->client_id = $client_id;
         $doc->form_id = $form_id;
+        $doc->user_id = $current_user->id;
         $doc->save();
       }
     }

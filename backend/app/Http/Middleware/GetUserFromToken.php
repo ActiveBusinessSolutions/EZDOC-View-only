@@ -22,7 +22,7 @@ class GetUserFromToken extends BaseMiddleware
     }
 
     if (!$user = $this->auth->authenticate($token)) {
-      throw new JWTException('user_not_found', 404);
+      throw new JWTException('user_not_found', 401);
     }
 
     $this->events->fire('tymon.jwt.valid', $user);

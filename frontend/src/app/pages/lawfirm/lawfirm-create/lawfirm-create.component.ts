@@ -11,6 +11,8 @@ import "../../../../assets/plugins/jqwidgets/jqxlistbox.js"
 import "../../../../assets/plugins/jqwidgets/jqxcombobox.js"
 import "../../../../assets/plugins/jqwidgets/jqxpanel.js"
 import "../../../../assets/plugins/jqwidgets/jqxcheckbox.js"
+import { StaticData } from 'app/static-data';
+import { Router } from '@angular/router';
 
 declare let App;
 declare let $;
@@ -22,29 +24,52 @@ declare let $;
   providers: [LawfirmService, ProfileService]
 })
 export class LawfirmCreateComponent implements OnInit {
-  static instance: LawfirmCreateComponent;
   lawfirm: Lawfirm = new Lawfirm();
+  confirm_password: string;
 
-  constructor(private _lawfirmService: LawfirmService) {
-    LawfirmCreateComponent.instance = this;
+  constructor(private _lawfirmService: LawfirmService, private _router: Router) {
   }
 
   ngOnInit() {
   }
 
   ngAfterViewInit() {
+    let self = this;
     FormValidation.validate('lawfirm_create', function () {
-      LawfirmCreateComponent.instance.createLawfirm();
+      self.createLawfirm();
     });
 
     $(document).ready(function () {
+      $('#countrySelector').jqxComboBox({
+        theme: 'metro',
+        source: StaticData.countries,
+        width: '100%',
+        height: 35
+      });
+      
       $('#stateSelector').jqxComboBox({
         theme: 'metro',
-        source: Common.states,
+        source: StaticData.states,
         width: '100%',
         height: 35
       });
     });
+  }
+
+  onAptTypeChanged(event, type) {
+    event.preventDefault();
+
+    this.lawfirm.apartment = false;
+    this.lawfirm.suite = false;
+    this.lawfirm.floor = false;
+
+    if (type == "apartment") {
+      this.lawfirm.apartment = true;
+    } else if (type == "suite") {
+      this.lawfirm.suite = true;
+    } else {
+      this.lawfirm.floor = true;
+    }
   }
 
   onSubmit() {
@@ -55,10 +80,21 @@ export class LawfirmCreateComponent implements OnInit {
       return;
     }
     this.lawfirm.state = $('#stateSelector').val();
+    this.lawfirm.country = $('#countrySelector').val();
     if (this.lawfirm.state == '') {
       Notification.notifyAny({message: 'The state field is required.', type: 'error'});
       return;
     }
+    if (this.lawfirm.country == '') {
+      Notification.notifyAny({ message: 'The country field is required.', type: 'error' });
+      return;
+    }
+    if (this.lawfirm.password != this.confirm_password) {
+      Notification.notifyAny({ message: 'The confirm password does not match.', type: 'error' });
+      return;
+    }
+
+    console.log('create', this.lawfirm);
 
     $('.loading').show();
 
@@ -68,6 +104,8 @@ export class LawfirmCreateComponent implements OnInit {
 
         let message = data.success.message;
         Notification.notifyAny({message: message});
+
+        this._router.navigate(['/pages/client/list']);
       }, error2 => {
         $('.loading').fadeOut();
       });

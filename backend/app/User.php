@@ -11,6 +11,7 @@ use Bican\Roles\Traits\HasRoleAndPermission;
 use Bican\Roles\Contracts\HasRoleAndPermission as HasRoleAndPermissionContract;
 use App\Models\Profile;
 use App\Models\Client;
+use App\Models\Doc;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -48,5 +49,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
   public function clients()
   {
     return $this->hasMany(Client::class, 'user_id');
+  }
+
+  public function docs()
+  {
+    return $this->hasMany(Doc::class, 'user_id');
   }
 }

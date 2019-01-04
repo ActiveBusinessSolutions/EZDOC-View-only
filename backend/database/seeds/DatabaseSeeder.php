@@ -315,16 +315,31 @@ class DocsTableSeeder extends Seeder
     $clients = Client::all();
     $clients->each(function ($client) {
       // add i-589 form to each client
-      Doc::create(['client_id' => $client->id, 'form_id' => 1, 'approved' => true]);
+      $profile = App\Models\Profile::where('lawfirm_id', $client->lawfirm_id)->get()->random();
+      Doc::create([
+        'client_id' => $client->id, 
+        'form_id' => 1,
+        'user_id' => $profile->user_id,
+        'approved' => true,
+      ]);
     });
 
     for ($i = 0; $i < 50; $i++) {
+      $client = App\Models\Client::all()->random();
+      $client_id = $client->id;
+      $profile = App\Models\Profile::where('lawfirm_id', $client->lawfirm_id)->get()->random();
+
       $doc = [
         'client_id' => App\Models\Client::all()->random()->id,
         'form_id' => App\Models\Form::all()->random()->id,
+        'user_id' => $profile->user_id,
         'approved' => true
       ];
-      $count = Doc::where($doc)->count();
+      // Disallow duplicated doc
+      $count = Doc::where([
+        'client_id' => $doc['client_id'],
+        'form_id' => $doc['form_id'],
+      ])->count();
       if ($count == 0) {
         Doc::create($doc);
       }
