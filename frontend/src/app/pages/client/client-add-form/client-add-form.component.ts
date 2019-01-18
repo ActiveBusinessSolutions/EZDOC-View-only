@@ -79,14 +79,14 @@ export class ClientAddFormComponent implements OnInit {
   }
 
   getDocsByClientId() {
-    $('.loading').show();
+    Common.showLoading();
 
     this._clientService.getDocsByClientId(this.client_id)
       .subscribe(data => {
         this.docs = data.docs.data || [];
         this.getForms();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
@@ -96,9 +96,9 @@ export class ClientAddFormComponent implements OnInit {
         let temps = data.data;
         this.getFormWidgets(temps);
 
-        $('.loading').fadeOut();
+        Common.hideLoading();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 

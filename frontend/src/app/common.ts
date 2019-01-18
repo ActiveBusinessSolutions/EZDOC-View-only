@@ -232,4 +232,24 @@ export class Common {
 
     return dateArray[2] + seprator + dateArray[1] + seprator + dateArray[0];
   }
+
+  static showLoading() {
+    $(".loader").addClass("active");
+  }
+
+  static hideLoading() {
+    setTimeout(function() {
+      $(".loader").removeClass("active");
+    }, 150);
+  }
+
+  static dateToMDY(date) {
+    var d = date.getDate();
+    var m = date.getMonth() + 1; //Month from 0 to 11
+    var y = date.getFullYear();
+    if(isNaN(y) || isNaN(m) || isNaN(d)) {
+      return '';
+    }
+    return '' + (m <= 9 ? '0' + m : m) + '/' + (d <= 9 ? '0' + d : d) + '/' + y;
+  }
 }

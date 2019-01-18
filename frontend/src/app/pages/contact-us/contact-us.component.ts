@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ProfileService} from "../../services/profile.service";
 import {Router} from '@angular/router';
 import {Notification} from "../../common_modules/notification";
+import { Common } from 'app/common';
 
 declare let $;
 declare let App;
@@ -29,12 +30,12 @@ export class ContactUsComponent implements OnInit {
   }
 
   contactUs(contactForm) {
-    $('.loading').show();
+    Common.showLoading();
 
     this._profileService.contactUSMail(this.email, this.username, this.phone, this.message)
       .subscribe(
         response => {
-          $('.loading').fadeOut();
+          Common.hideLoading();
           Notification.notifyAny({message: "Successfully sent email"});
           this.email = '';
           this.username = '';
@@ -42,7 +43,7 @@ export class ContactUsComponent implements OnInit {
           this.message = '';
         },
         response => {
-          $('.loading').fadeOut();
+          Common.hideLoading();
           Notification.notifyAny({message: "Failed to send email"});
         }
       );

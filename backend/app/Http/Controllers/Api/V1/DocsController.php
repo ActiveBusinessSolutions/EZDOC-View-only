@@ -135,6 +135,7 @@ class DocsController extends Controller
     $data = getCollection3($doc_data, $data);
     $data = getCollection($lawfirm, 'lawfirms', $data);
     $data = getCollection($profile, 'profiles', $data);
+    $data = getCollection($user, 'users', $data);
 
     return $data;
   }
@@ -196,7 +197,6 @@ class DocsController extends Controller
     $client_id = $request->input('client_id');
     $form_ids = $request->input('ids');
     foreach ($form_ids as $form_id) {
-      if ($form_id == 1) continue;
       $doc = Doc::where('client_id', $client_id)
         ->where('form_id', $form_id)
         ->first();

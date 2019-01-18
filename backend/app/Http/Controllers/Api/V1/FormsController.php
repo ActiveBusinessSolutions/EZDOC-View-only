@@ -13,7 +13,10 @@ class FormsController extends Controller
 {
     public function index()
     {
-        $data = Form::all();
+        // TODO: Ignore forms desides G28, N-400, I-589
+        $whitelist = [1, 6, 10];
+        // $data = Form::all();
+        $data = Form::where('id', 1)->orWhere('id', 6)->orWhere('id', 10)->get();
         
         return json()->withCollection(
             $data,

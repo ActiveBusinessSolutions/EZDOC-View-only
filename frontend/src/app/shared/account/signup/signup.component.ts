@@ -46,6 +46,8 @@ export class SignupComponent implements OnInit {
   private user: User;
   private profile: Profile;
   private lawfirm_password;
+  private lawfirm_name;
+  private lawfirms = [];
 
   constructor(private _userService: UserService,
               private _router: Router,
@@ -68,26 +70,26 @@ export class SignupComponent implements OnInit {
     this.profile.is_subject_to_any = false;
     
     // DEBUG: Test code here
-    this.profile.first_name = faker.name.findName().split(" ")[0];
-    this.profile.middle_name = faker.name.findName().split(" ")[1];
-    this.profile.last_name = faker.name.findName().split(" ")[1];
-    this.profile.telephone_number = faker.phone.phoneNumber();
-    this.profile.mobile_number = faker.phone.phoneNumber();
-    this.profile.fax_number = faker.phone.phoneNumber();
-    this.profile.street = faker.address.streetAddress();
-    this.profile.apt_number = "ABC123";
-    this.profile.city = faker.address.city();
-    // this.profile.state = faker.address.state();
-    this.profile.zip_code = faker.address.zipCode();
-    this.profile.province = faker.address.state();
-    // this.profile.country = faker.address.country();
-    this.profile.uscis_account_number = "123456789";
-    this.profile.licensing_authority = faker.company.companyName();
-    this.profile.bar_number = "684516843";
-    this.profile.preparer_signature = "321543872";
-    this.user.password = '123456';
-    this.retype_password = '123456';
-    this.lawfirm_password = '123456';
+    // this.profile.first_name = faker.name.findName().split(" ")[0];
+    // this.profile.middle_name = faker.name.findName().split(" ")[1];
+    // this.profile.last_name = faker.name.findName().split(" ")[1];
+    // this.profile.telephone_number = faker.phone.phoneNumber();
+    // this.profile.mobile_number = faker.phone.phoneNumber();
+    // this.profile.fax_number = faker.phone.phoneNumber();
+    // this.profile.street = faker.address.streetAddress();
+    // this.profile.apt_number = "ABC123";
+    // this.profile.city = faker.address.city();
+    // // this.profile.state = faker.address.state();
+    // this.profile.zip_code = faker.address.zipCode();
+    // this.profile.province = faker.address.state();
+    // // this.profile.country = faker.address.country();
+    // this.profile.uscis_account_number = "123456789";
+    // this.profile.licensing_authority = faker.company.companyName();
+    // this.profile.bar_number = "684516843";
+    // this.profile.preparer_signature = "321543872";
+    // this.user.password = '123456';
+    // this.retype_password = '123456';
+    // this.lawfirm_password = '123456';
 
     this.getLawfirms();
     this.getCaptcha();
@@ -101,18 +103,11 @@ export class SignupComponent implements OnInit {
     InitEvents();
 
     function InitWidgets() {
-      $('#lawfirmSelector').jqxDropDownList({
-        theme: 'metro',
-        width: '100%',
-        height: 33,
-        itemHeight: 30,
-      });
-
       $('#countrySelector').jqxComboBox({
         theme: 'metro',
         source: StaticData.countries,
         width: '100%',
-        height: 33,
+        height: 31,
         itemHeight: 30,
       });
 
@@ -120,7 +115,7 @@ export class SignupComponent implements OnInit {
         theme: 'metro',
         source: StaticData.states,
         width: '100%',
-        height: 33,
+        height: 31,
         itemHeight: 30,
       });
     }
@@ -130,6 +125,15 @@ export class SignupComponent implements OnInit {
         self.profile.is_subject_to_any = $(this)[0].checked;
       });
 
+      $("#isAttorneyCheck").change(function() {
+        let checked = $(this)[0].checked;
+        if(checked) {
+          self.SelectRole("attorney");
+        } else {
+          self.SelectRole("paralegal");
+        }
+      });
+
       $('#countrySelector').on('select', function (event) {
         self.profile.country = $(this).val();
       });
@@ -137,7 +141,21 @@ export class SignupComponent implements OnInit {
       $('#stateSelector').on('select', function (event) {
         self.profile.state = $(this).val();
       });
+
+      $("#lawfirmNameInput").keyup(function() {
+        self.profile.lawfirm_id = self.getLawfirmId($(this).val());
+      });
     }
+  }
+
+  getLawfirmId(lawfirmName) {
+    for(var i = 0; i < this.lawfirms.length; i++) {
+      if(this.lawfirms[i].name === lawfirmName) {
+        return this.lawfirms[i].id;
+      }
+    }
+    
+    return null;
   }
 
   onAptTypeChanged(event, type) {
@@ -164,23 +182,7 @@ export class SignupComponent implements OnInit {
   getLawfirms() {
     this._lawfirmService.getLawfirms()
       .subscribe(data => {
-        let source =
-          {
-            datatype: "json",
-            datafields: [
-              {name: 'id'},
-              {name: 'name'}
-            ],
-            localData: data.data,
-          };
-        let dataAdapter = new $.jqx.dataAdapter(source);
-
-        $('#lawfirmSelector').jqxDropDownList({
-          source: dataAdapter,
-          displayMember: "name",
-          valueMember: "id"
-        });
-        $('#lawfirmSelector').jqxDropDownList('selectIndex', 0);
+        this.lawfirms = data.data;
       });
   }
 
@@ -196,11 +198,14 @@ export class SignupComponent implements OnInit {
     this._userService.checkCaptcha(this.captcha_value, this.captcha_key)
       .subscribe(data => {
         if (data.json().success) {
+          if(this.profile.lawfirm_id === null) {
+            Notification.notifyAny({ message: 'The lawfirm does not exist!', type: 'error' });
+            return;
+          }
           let lawfirm = {
-            id: $('#lawfirmSelector').val(),
+            id: this.profile.lawfirm_id,
             password: this.lawfirm_password
           };
-          this.profile.lawfirm_id = lawfirm.id;
           if (this.user.password != this.retype_password) {
             Notification.notifyAny({ message: "Confirm password does not match!", type: 'error'});
             return;
@@ -209,11 +214,11 @@ export class SignupComponent implements OnInit {
           this._lawfirmService.confirmLawfirm(lawfirm)
             .subscribe(success => {
               console.log(this.user.email);
-              $('.loading').show();
+              Common.showLoading();
 
               this._userService.signup(this.user.email, this.user.password, this.role, this.profile)
                 .subscribe(success => {
-                  $('.loading').fadeOut();
+                  Common.hideLoading();
 
                   let html =
                     '<div class="center">\n' +
@@ -233,7 +238,7 @@ export class SignupComponent implements OnInit {
                     SignupComponent.instance._router.navigate(['/']);
                   });
                 }, error => {
-                  $('.loading').fadeOut();
+                  Common.hideLoading();
                 });
             });
         }

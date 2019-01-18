@@ -109,12 +109,12 @@ export class ClientReactivationComponent implements OnInit {
   }
 
   getDeletedClients() {
-    $('.loading').show();
+    Common.showLoading();
     let self = this;
 
     this._clientService.getDeletedClients()
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
 
         this.clients = data;
         this.selected_ids = [];
@@ -140,7 +140,7 @@ export class ClientReactivationComponent implements OnInit {
         this._cd.detectChanges();
 
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 

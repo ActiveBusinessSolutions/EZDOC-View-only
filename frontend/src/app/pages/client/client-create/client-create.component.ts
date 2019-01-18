@@ -4,6 +4,8 @@ import {Router} from "@angular/router";
 import {FormDocComponent} from "../../form/form-doc/form-doc.component";
 import {PaginatorComponent} from "../shared/paginator/paginator.component";
 
+declare let $;
+
 @Component({
   selector: 'app-client-create',
   templateUrl: './client-create.component.html',
@@ -16,6 +18,12 @@ export class ClientCreateComponent implements OnInit {
   ngOnInit() {
     localStorage.setItem('form_wizard', "1");
     FormDocComponent.instance.form_id = 1;
+
+    $(document).ready(function() {
+      setTimeout(function () {
+        $("#createButtonContainer").fadeIn();
+      }, 1000);
+    });
   }
 
   submitDoc() {

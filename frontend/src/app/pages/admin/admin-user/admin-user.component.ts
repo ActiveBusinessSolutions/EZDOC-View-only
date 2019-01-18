@@ -104,12 +104,12 @@ export class AdminUserComponent implements OnInit {
   }
 
   getUsers() {
-    $('.loading').show();
+    Common.showLoading();
     let self = this;
 
     this._userService.getAllUsers()
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
 
         this.users = data.data;
         this.selected_ids = [];
@@ -136,7 +136,7 @@ export class AdminUserComponent implements OnInit {
 
         this._cd.detectChanges();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 

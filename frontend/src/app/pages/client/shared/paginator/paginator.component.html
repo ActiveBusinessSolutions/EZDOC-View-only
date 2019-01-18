@@ -6,7 +6,7 @@
     <a (click)="goto(currentPage - 1)"><i class="fa fa-angle-left"></i></a>
   </li>
   <li>
-    <a id="pageInput" contenteditable="true" (keyup)="keyup($event)"></a>
+    <a id="pageInput" contenteditable="true" (keydown)="keydown($event)"></a>
   </li>
   <li class="next" [class.disabled]="currentPage == pageCount">
     <a (click)="goto(currentPage + 1)"><i class="fa fa-angle-right"></i></a>

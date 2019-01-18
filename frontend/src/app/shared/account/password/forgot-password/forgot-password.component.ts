@@ -24,15 +24,15 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   onSubmit(form) {
-    $('.loading').show();
+    Common.showLoading();
 
     let url = window.location.origin;
     this._userService.forgetpassword(this.email, url)
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
         Notification.notifyAny({message: 'Success to send email. Look your email inbox.'});
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 

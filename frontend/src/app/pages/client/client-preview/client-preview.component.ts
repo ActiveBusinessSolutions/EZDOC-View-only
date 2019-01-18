@@ -58,11 +58,11 @@ export class ClientPreviewComponent implements OnInit {
     if (isNullOrUndefined(this.client_id) || isNullOrUndefined(this.form_id)) {
       return;
     }
-    $('.loading').show();
+    Common.showLoading();
 
     this._formService.getForm(this.form_id)
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
         this.form_type = data.type || '';
         $('#printInfo').html(this.form_type);
         this.template = JSON.parse(data.template);
@@ -76,7 +76,7 @@ export class ClientPreviewComponent implements OnInit {
 
         this.getDoc();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
@@ -100,7 +100,7 @@ export class ClientPreviewComponent implements OnInit {
         }
         this.updatePreviewCSS();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
@@ -117,7 +117,7 @@ export class ClientPreviewComponent implements OnInit {
   }
 
   print() {
-    $('.loading').show();
+    Common.showLoading();
     this.preparePrintCSS();
     let div = $('#formPreviewContainer');
     let html = div[0].outerHTML;
@@ -130,9 +130,9 @@ export class ClientPreviewComponent implements OnInit {
         let url = Common.BASE_URL + '/api/downloadDoc?doc_name=' + doc_name + '&token=' + Common.getUser().token;
         window.open(url, '_self');
 
-        $('.loading').fadeOut();
+        Common.hideLoading();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
 
     this.updatePreviewCSS();

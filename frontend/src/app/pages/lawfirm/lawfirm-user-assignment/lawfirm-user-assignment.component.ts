@@ -124,12 +124,12 @@ export class LawfirmUserAssignmentComponent implements OnInit {
   }
 
   getUsers() {
-    $('.loading').show();
+    Common.showLoading();
     let self = this;
 
     this._userService.getNewUsers()
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
 
         this.users = data;
         this.selected_ids = [];
@@ -161,7 +161,7 @@ export class LawfirmUserAssignmentComponent implements OnInit {
         this._cd.detectChanges();
 
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 

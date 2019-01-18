@@ -96,18 +96,18 @@ export class LawfirmCreateComponent implements OnInit {
 
     console.log('create', this.lawfirm);
 
-    $('.loading').show();
+    Common.showLoading();
 
     this._lawfirmService.createLawfirm(this.lawfirm)
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
 
         let message = data.success.message;
         Notification.notifyAny({message: message});
 
         this._router.navigate(['/pages/client/list']);
       }, error2 => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 }

@@ -52,32 +52,16 @@ export class LawfirmProfileComponent implements OnInit {
       });
     });
   }
-
-  onAptTypeChanged(event, type) {
-    event.preventDefault();
-
-    this.lawfirm.apartment = false;
-    this.lawfirm.suite = false;
-    this.lawfirm.floor = false;
-
-    if (type == "apartment") {
-      this.lawfirm.apartment = true;
-    } else if (type == "suite") {
-      this.lawfirm.suite = true;
-    } else {
-      this.lawfirm.floor = true;
-    }
-  }
-
+  
   onSubmit() {
   }
 
   getLawfirm() {
-    $('.loading').show();
+    Common.showLoading();
 
     this._lawfirmService.getMyLawfirm()
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
 
         console.log(data);
         this.lawfirm = data.lawfirm;
@@ -99,16 +83,16 @@ export class LawfirmProfileComponent implements OnInit {
       Notification.notifyAny({ message: 'The country field is required.', type: 'error' });
       return;
     }
-    $('.loading').show();
+    Common.showLoading();
 
     this._lawfirmService.updateLawfirm(this.lawfirm)
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
 
         let message = data.success.message;
         Notification.notifyAny({message: message});
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 }

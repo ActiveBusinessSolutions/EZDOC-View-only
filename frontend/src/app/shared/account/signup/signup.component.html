@@ -18,17 +18,17 @@
           <div class="col-sm-9">
             <div class="mt-radio-inline">
               <label class="mt-radio">
-                <input type="radio" (click)="SelectRole('admin')" name="optionsRadios1">
+                <input type="radio" (click)="SelectRole('admin')" [checked]="role == 'admin'" name="optionsRadios1">
                 Admin
                 <span></span>
               </label>
               <label class="mt-radio">
-                <input type="radio" (click)="SelectRole('paralegal')" name="optionsRadios1">
+                <input type="radio" (click)="SelectRole('paralegal')" [checked]="role == 'paralegal'" name="optionsRadios1">
                 Paralegal
                 <span></span>
               </label>
               <label class="mt-radio">
-                <input type="radio" (click)="SelectRole('attorney')" name="optionsRadios1" checked>
+                <input type="radio" (click)="SelectRole('attorney')" [checked]="role == 'attorney'" name="optionsRadios1" checked>
                 Attorney
                 <span></span>
               </label>
@@ -39,31 +39,36 @@
           <div class="col-md-6">
             <!-- BEGIN FORM-->
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="First Name" name="first_name"
+              <label>First Name</label>
+              <input class="form-control" type="text" name="first_name"
                      [(ngModel)]="profile.first_name" [ngModelOptions]="{standalone: true}"
                      required/>
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Middle Name" name="middle_name"
-                     [(ngModel)]="profile.middle_name" [ngModelOptions]="{standalone: true}"
-                     required/>
+              <label>Middle Name</label>
+              <input class="form-control" type="text" name="middle_name"
+                     [(ngModel)]="profile.middle_name" [ngModelOptions]="{standalone: true}" />
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Last Name" name="last_name"
+              <label>Last Name</label>
+              <input class="form-control" type="text" name="last_name"
                      [(ngModel)]="profile.last_name" [ngModelOptions]="{standalone: true}"
                      required/>
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="TelephoneNumber Number" name="telephone_number"
+              <label>Telephone Number</label>
+              <input class="form-control" type="text" name="telephone_number"
                      [(ngModel)]="profile.telephone_number" [ngModelOptions]="{standalone: true}" required/>
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Mobile Number" name="mobile_number"
-                     [(ngModel)]="profile.mobile_number" [ngModelOptions]="{standalone: true}" required/>
+              <label>Mobile Number</label>
+              <input class="form-control" type="text" name="mobile_number"
+                     [(ngModel)]="profile.mobile_number" [ngModelOptions]="{standalone: true}"/>
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Fax Number" name="fax_number"
-                     [(ngModel)]="profile.fax_number" [ngModelOptions]="{standalone: true}" required/>
+              <label>Fax Number</label>
+              <input class="form-control" type="text" name="fax_number"
+                     [(ngModel)]="profile.fax_number" [ngModelOptions]="{standalone: true}"/>
             </div>
             <div class="form-group">
               <label class="control-label">Country</label>
@@ -74,15 +79,18 @@
               <div id="stateSelector"></div>
             </div>
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="Province" name="province"
-                [(ngModel)]="profile.province" [ngModelOptions]="{standalone: true}" required>
+              <label>Province</label>
+              <input type="text" class="form-control" name="province"
+                [(ngModel)]="profile.province" [ngModelOptions]="{standalone: true}">
             </div>
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="City" name="city"
+              <label>City</label>
+              <input type="text" class="form-control" name="city"
                 [(ngModel)]="profile.city" [ngModelOptions]="{standalone: true}" required>
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Street" name="street"
+              <label>Street Number and Name</label>
+              <input class="form-control" type="text" name="street"
                      [(ngModel)]="profile.street" [ngModelOptions]="{standalone: true}" required/>
             </div>
             <div class="form-group margin-top-20">
@@ -115,13 +123,14 @@
                   </td>
                   <td>
                     <input class="form-control" type="text" placeholder="" name="apt_number" [(ngModel)]="profile.apt_number"
-                      [ngModelOptions]="{standalone: true}" required />
+                      [ngModelOptions]="{standalone: true}" />
                   </td>
                 </tr>
               </table>
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Zip Code" name="zip_code"
+              <label>Zip Code</label>
+              <input class="form-control" type="text" name="zip_code"
                 [(ngModel)]="profile.zip_code" [ngModelOptions]="{standalone: true}"
                 required/>
             </div>
@@ -130,32 +139,34 @@
           <div class="col-md-6">
             <!-- BEGIN FORM-->
             <div class="form-group">
-              <input class="form-control" type="email" placeholder="Email" name="email"
+              <label>Email</label>
+              <input class="form-control" type="email" name="email" autocomplete="off"
                 [(ngModel)]="user.email" [ngModelOptions]="{standalone: true}" required/>
             </div>
             <div class="form-group">
+              <label>Password</label>
               <input class="form-control placeholder-no-fix" type="password" autocomplete="off" id="register_password"
-                placeholder="Password" name="password" [(ngModel)]="user.password" [ngModelOptions]="{standalone: true}" required/>
+                name="password" [(ngModel)]="user.password" [ngModelOptions]="{standalone: true}" required/>
             </div>
             <div class="form-group">
+              <label>Confirm Password</label>
               <input class="form-control placeholder-no-fix" type="password" autocomplete="off"
-                placeholder="Confirm Password" name="rpassword" [(ngModel)]="retype_password" [ngModelOptions]="{standalone: true}" required/>
-            </div>
-            <div class="form-group">
-              <input class="form-control" type="text" placeholder="State Bar Number" name="bar_number"
-                [(ngModel)]="profile.bar_number" [ngModelOptions]="{standalone: true}" required/>
+                name="rpassword" [(ngModel)]="retype_password" [ngModelOptions]="{standalone: true}" required/>
             </div>
             <div id="lawfirmSelectorContainer" class="form-group">
-              <label>Select Lawfirm</label>
-              <div id="lawfirmSelector"></div>
+              <label>Lawfirm Name</label>
+              <input class="form-control" type="text" name="lawfirm_name" id="lawfirmNameInput"
+                [(ngModel)]="lawfirm_name" [ngModelOptions]="{standalone: true}" required/>
             </div>
             <div class="form-group">
-              <input class="form-control" type="password" name="lawfirm_password" placeholder="Law Firm Password"
+              <label>Lawfirm Password</label>
+              <input class="form-control" type="password" name="lawfirm_password"
                 [(ngModel)]="lawfirm_password" [ngModelOptions]="{standalone: true}"
                 required/>
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="USCIS Account Number" name="uscis_account_number"
+              <label>USCIS Account Number</label>
+              <input class="form-control" type="text" name="uscis_account_number"
                 [(ngModel)]="profile.uscis_account_number" [ngModelOptions]="{standalone: true}"
                 required/>
             </div>
@@ -166,13 +177,21 @@
                 required/>
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Licensing Authority" name="licensing_authority"
-                [(ngModel)]="profile.licensing_authority" [ngModelOptions]="{standalone: true}"
-                required/>
+              <label>Licensing Authority</label>
+              <input class="form-control" type="text" name="licensing_authority"
+                [(ngModel)]="profile.licensing_authority" [ngModelOptions]="{standalone: true}" />
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Bar Numer (if applicable)" name="bar_number"
+              <label>Bar Numer (if applicable)</label>
+              <input class="form-control" type="text" name="bar_number"
                 [(ngModel)]="profile.bar_number" [ngModelOptions]="{standalone: true}" />
+            </div>
+            <div class="form-group">
+              <label class="mt-checkbox mt-checkbox-outline">
+                <input id="isAttorneyCheck" type="checkbox" name="is_attorney" [(ngModel)]="profile.is_attorney" [ngModelOptions]="{standalone: true}" />
+                &nbsp;I am an attorney elegible to practice law and in good standing
+                <span></span>
+              </label>
             </div>
             <div class="form-group">
               <label class="mt-checkbox mt-checkbox-outline">
@@ -185,9 +204,9 @@
                 required></textarea>
             </div>
             <div class="form-group">
-              <input class="form-control" type="text" placeholder="Signature of Preparer" name="preparer_signature"
-                [(ngModel)]="profile.preparer_signature" [ngModelOptions]="{standalone: true}"
-                required/>
+              <label>Signature of Preparer</label>
+              <input class="form-control" type="text" name="preparer_signature"
+                [(ngModel)]="profile.preparer_signature" [ngModelOptions]="{standalone: true}" />
             </div>
             <div class="margin-bottom-10">
               <div class="form-group">

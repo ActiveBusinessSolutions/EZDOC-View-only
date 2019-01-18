@@ -33,7 +33,6 @@ export class FinishFormWidgetComponent implements OnInit {
   }
 
   checkForm(doc) {
-    if(doc.form_id == 1) return;
     doc.checked = !doc.checked;
     this.onCheckChanged.emit();
   }
@@ -58,11 +57,11 @@ export class FinishFormWidgetComponent implements OnInit {
   }
 
   approveDismiss(doc_id, approve) {
-    $('.loading').show();
+    Common.showLoading();
 
     this._docService.approveDismissDoc(doc_id, approve)
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
 
         this.onApproveChanged.emit();
       })

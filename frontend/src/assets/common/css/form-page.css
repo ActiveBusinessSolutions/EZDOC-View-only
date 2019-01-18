@@ -25,8 +25,8 @@
 }
 
 .form-container {
-  overflow: auto;
-  max-height: 650px;
+  overflow-x: auto;
+  /* max-height: 650px; */
   /* padding: 40px 20px; */
 }
 

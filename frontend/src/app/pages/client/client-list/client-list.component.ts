@@ -75,15 +75,14 @@ export class ClientListComponent implements OnInit {
           $('#clientsTable tbody tr').unbind('click');
           $('#clientsTable tbody tr').click(function () {
             var id = this.id;
-            var index = $.inArray(id, self.selected_ids);
 
-            if (index === -1 && id != "") {
+            self.selected_ids = [];
+            if (id != "") {
               self.selected_ids.push(id);
-            } else {
-              self.selected_ids.splice(index, 1);
+              
+              $('#clientsTable tbody tr.selected').removeClass("selected");
+              $(this).addClass('selected');
             }
-
-            if(id != "") $(this).toggleClass('selected');
 
             // Update button enable status
             if (self.selected_ids.length == 0) {
@@ -94,6 +93,13 @@ export class ClientListComponent implements OnInit {
               $('#detailButton, #formsButton').addClass('disabled');
               $('#deleteButton').removeClass('disabled');
             }
+          });
+          $('#clientsTable tbody tr').dblclick(function (event) {
+            event.preventDefault();
+
+            var id = this.id;
+            localStorage.setItem('form_wizard', "1");
+            self._router.navigate(['/pages/client/detail/' + id + '/1']);
           });
         });
 
@@ -118,12 +124,12 @@ export class ClientListComponent implements OnInit {
   }
 
   getClients() {
-    $('.loading').show();
+    Common.showLoading();
     let self = this;
 
     this._clientService.getLawfirmClients()
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
 
         this.clients = data;
 
@@ -150,7 +156,7 @@ export class ClientListComponent implements OnInit {
         this._cd.detectChanges();
 
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
@@ -158,18 +164,18 @@ export class ClientListComponent implements OnInit {
     let self = this;
 
     Common.confirm("Are you sure to delete selected clients?", function () {
-      $('.loading').show();
+      Common.showLoading();
 
       self._clientService.deleteClients(client_ids)
         .subscribe(data => {
-          $('.loading').fadeOut();
+          Common.hideLoading();
 
           let message = data.success.message || '';
           Notification.notifyAny({message: message, title: 'Server'});
           self.getClients();
           NavbarComponent.instance.refreshNotifications();
         }, error => {
-          $('.loading').fadeOut();
+          Common.hideLoading();
         });
     });
   }

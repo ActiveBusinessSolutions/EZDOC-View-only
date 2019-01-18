@@ -45,11 +45,11 @@ export class RegisterVerifyComponent implements OnInit {
 
     console.log('verify', data);
 
-    $('.loading').show();
+    Common.showLoading();
     
     this._userService.verifyRegister(data)
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
         console.log(data);
 
         let html = 
@@ -65,7 +65,7 @@ export class RegisterVerifyComponent implements OnInit {
           self._router.navigate(['/']);
         });
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 }

@@ -71,7 +71,10 @@ export class ClientDetailComponent implements OnInit {
   }
 
   pageSelected(event) {
-    $('#docContainer')[0].scrollTop = 0;
+    // $('#docContainer')[0].scrollTop = 0;
+    $("html, body").animate({
+      scrollTop: 100
+    }, 'fast');
     FormDocComponent.instance.extractInputs();
     this.currentPage = event;
   }

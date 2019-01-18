@@ -98,11 +98,11 @@ export class LawfirmSignupComponent {
       return;
     }
 
-    $(".loading").show();
+    Common.showLoading();
 
     this._lawfirmService.createLawfirm(this.lawfirm).subscribe(
       data => {
-        $(".loading").fadeOut();
+        Common.hideLoading();
 
         let message = data.success.message;
         let self = this;
@@ -120,7 +120,7 @@ export class LawfirmSignupComponent {
         });
       },
       error2 => {
-        $(".loading").fadeOut();
+        Common.hideLoading();
       }
     );
   }

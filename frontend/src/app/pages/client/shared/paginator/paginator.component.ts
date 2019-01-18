@@ -29,8 +29,10 @@ export class PaginatorComponent implements OnInit {
     $('#pageInput').html(this.currentPage + ' / ' + this.pageCount);
   }
 
-  keyup(event) {
+  keydown(event) {
     if (event.keyCode == 13) {
+      event.preventDefault();
+
       PaginatorComponent.instance.onPageChanged();
     }
   }

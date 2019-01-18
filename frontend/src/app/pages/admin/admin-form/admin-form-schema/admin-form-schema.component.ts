@@ -194,7 +194,7 @@ export class AdminFormSchemaComponent implements OnInit {
   }
 
   getForms() {
-    $('.loading').show();
+    Common.showLoading();
 
     this._formService.getForms()
       .subscribe(data => {
@@ -221,9 +221,9 @@ export class AdminFormSchemaComponent implements OnInit {
           $('#formSelector').val(id);
         }
 
-        $('.loading').fadeOut();
+        Common.hideLoading();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
@@ -317,7 +317,7 @@ export class AdminFormSchemaComponent implements OnInit {
 
     FormHelper.buildHtml($('#previewContainer'), this.page, 'admin');
 
-    $('.loading').fadeOut();
+    Common.hideLoading();
   }
 
   addItem(type = 'normal') {
@@ -339,6 +339,7 @@ export class AdminFormSchemaComponent implements OnInit {
         item['wizard_id'] = $('#wizardSelector').val();
         item['section_id'] = $('#wizardSectionSelector').val();
         item['new_row'] = $('#newRowInput')[0].checked;
+        item['no_need_validation'] = $('#validationNoNeedInput')[0].checked;
         item['group_label'] = $('#groupLabelInput').val();
         item['label'] = $('#labelInput').val();
         item['response_class'] = $('#responseClassInput').val();
@@ -391,6 +392,7 @@ export class AdminFormSchemaComponent implements OnInit {
         wizard_id: $('#wizardSelector').val(),
         section_id: $('#wizardSectionSelector').val(),
         new_row: $('#newRowInput')[0].checked,
+        no_need_validation: $('#validationNoNeedInput')[0].checked,
         group_label: $('#groupLabelInput').val(),
         label: $('#labelInput').val(),
         response_class: $('#responseClassInput').val(),
@@ -400,8 +402,8 @@ export class AdminFormSchemaComponent implements OnInit {
       console.log(item);
 
       // TODO : Test code here
-      // this.onItemChanged();
-      $("#cellModal").modal('hide');
+      this.onItemChanged();
+      // $("#cellModal").modal('hide');
     }
   }
 
@@ -526,7 +528,7 @@ export class AdminFormSchemaComponent implements OnInit {
   }
 
   selectPage(index) {
-    $('.loading').show();
+    Common.showLoading();
 
     this.page = this.template.pages[index - 1];
     this.page.body = this.page.body || {
@@ -559,6 +561,7 @@ export class AdminFormSchemaComponent implements OnInit {
     $('#wizardSelector').val(item.wizard_id || -1);
     $('#wizardSectionSelector').val(item.section_id || -1);
     $('#newRowInput')[0].checked = item.new_row;
+    $('#validationNoNeedInput')[0].checked = item.no_need_validation;
     $('#groupLabelInput').val(item.group_label || '');
     $('#labelInput').val(item.label || '');
     $('#responseClassInput').val(item.response_class || '');
@@ -585,7 +588,7 @@ export class AdminFormSchemaComponent implements OnInit {
 
   onItemChanged() {
     $("#cellModal").modal('hide');
-    $('.loading').show();
+    Common.showLoading();
     window.setTimeout(function () {
       AdminFormSchemaComponent.instance.refreshTree();
     }, 500);

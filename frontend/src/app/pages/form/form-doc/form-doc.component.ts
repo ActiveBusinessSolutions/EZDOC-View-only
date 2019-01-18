@@ -77,7 +77,7 @@ export class FormDocComponent implements OnInit {
   }
 
   onResize() {
-    $('.form-container').height($(window).height() - 100);
+    // $('.form-container').height($(window).height() - 100);
   }
 
   ngOnChanges() {
@@ -85,7 +85,7 @@ export class FormDocComponent implements OnInit {
   }
 
   getForm() {
-    $('.loading').show();
+    Common.showLoading();
 
     this._formService.getForm(this.form_id)
       .subscribe(data => {
@@ -97,9 +97,9 @@ export class FormDocComponent implements OnInit {
         this.refreshDocSchema();
         this.getDoc();
 
-        $('.loading').fadeOut();
+        Common.hideLoading();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
@@ -198,7 +198,6 @@ export class FormDocComponent implements OnInit {
 
   validationDom(item, value, pattern, errorTitle, errorMessage) {
     let dom = $("[dom-id=" + item.id + "]");
-    console.log(dom);
     if (!this.validateByPattern(value, pattern)) {
       console.log('validation error', item);
       dom.focus();
@@ -214,13 +213,16 @@ export class FormDocComponent implements OnInit {
   }
 
   validateItem(item, value) {
+    if(item.no_need_validation && value == null) {
+      return true;
+    }
     let validationType = item.validation_type;
     let validationLabel = item.validation_label;
     if (Common.isNone(validationLabel)) validationLabel = item.label;
     if (Common.isNone(validationLabel)) validationLabel = "The focused field";
     switch (validationType) {
       case "A-Number":
-        return this.validationDom(item, value, /^A\d{8,9}$/, "A-Number mismatch", validationLabel + " is missing type. eg: A12345678, A123456789");
+        return this.validationDom(item, value, /^\d{8,9}$/, "A-Number mismatch", validationLabel + " is missing type. eg: 12345678, 123456789");
       case "000-00-0000":
         return this.validationDom(item, value, /^\d{3}-\d{2}-\d{4}$/, "Format 000-00-0000", validationLabel + " is missing type. eg: 123-45-7890");
       case "date":
@@ -231,7 +233,7 @@ export class FormDocComponent implements OnInit {
   }
 
   submitDoc() {
-    $('.loading').show();
+    Common.showLoading();
 
     this.extractInputs();
 
@@ -250,7 +252,7 @@ export class FormDocComponent implements OnInit {
         // validate the inputs
         if (!Common.isNone(item.validation_type)) {
           if (!this.validateItem(item, value)) {
-            $(".loading").hide();
+            Common.hideLoading();
             return;
           }
         }
@@ -288,12 +290,12 @@ export class FormDocComponent implements OnInit {
 
           this._docService.createDoc(data, this.client_id, this.form_id)
             .subscribe(data => {
-              this._router.navigate(['/pages/client/addForm/' + this.client_id]);
+              this._router.navigate(['/pages/client/finish/' + this.client_id]);
             });
 
-          $('.loading').fadeOut();
+          Common.hideLoading();
         }, error => {
-          $('.loading').fadeOut();
+          Common.hideLoading();
         });
     }
     else { // Update client
@@ -305,9 +307,9 @@ export class FormDocComponent implements OnInit {
           }
           this.getDoc();
 
-          $('.loading').fadeOut();
+          Common.hideLoading();
         }, error => {
-          $('.loading').fadeOut();
+          Common.hideLoading();
         });
 
       this._docService.updateDoc(data, this.doc_id)
@@ -369,7 +371,18 @@ export class FormDocComponent implements OnInit {
             form_group.append($('<label class="label-grey" style="' + label_style + '">' + input.label + '</label>'));
             let input_item = this.getInputByItem(input);
 
-            form_group.append(input_item);
+            if(input.validation_type === 'A-Number') {
+              let div_input_table = $('<table style="width: 100%"></table>');
+              let div_input_group = $("<tr></tr>");
+              div_input_group.append($('<td style="width: 20px;">A -</td>'));
+              let input_td = $('<td></td>');
+              input_td.append(input_item);
+              div_input_group.append(input_td);
+              div_input_table.append(div_input_group);
+              form_group.append(div_input_table);
+            } else {
+              form_group.append(input_item);
+            }
             if (input.new_row) {
               let row = $('<div class="row wizard-row"></div>');
 
@@ -442,6 +455,7 @@ export class FormDocComponent implements OnInit {
       for (var i in mailingIds) {
         $('#' + mailingIds[i])[0].disabled = !hasMailingAddress;
       }
+      $("#normal_mailing_address_apt_type, #normal_residence_apartment_type").css('text-align', 'right');
     }
     catch (e) { }
   }

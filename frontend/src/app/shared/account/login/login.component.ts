@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    $('.loading').show();
+    Common.showLoading();
 
     this._userService.login(this.email, this.password)
       .subscribe(
@@ -74,12 +74,12 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/account/login']);
           }
 
-          $('.loading').fadeOut();
+          Common.hideLoading();
         },
         (error: any) => {
           Notification.notifyErrors(error);
 
-          $('.loading').fadeOut();
+          Common.hideLoading();
         }
       );
   }

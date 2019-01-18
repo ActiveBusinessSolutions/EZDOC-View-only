@@ -92,6 +92,8 @@ export class FormHelper {
       case 'textarea':
         if (type == 'print') {
           dom = $('<div' + attributes + '></div>');
+          let areaHeight = parseInt(dom.attr('rows'), 10) * 30;
+          dom.css('min-height', areaHeight);
         } else {
           dom = $('<textarea' + attributes + '></textarea>');
           dom.addClass('cell-input');
@@ -325,7 +327,12 @@ export class FormHelper {
       switch (item.type) {
         case 'input':
           if (type == 'print') {
-            $(id_selector).html(inputs[key]);
+            if (item.validation_type == 'date') {
+              let dateString = Common.dateToMDY(new Date(inputs[key]));
+              $(id_selector).html(dateString);
+            } else {
+              $(id_selector).html(inputs[key]);
+            }
           } else {
             $(id_selector).val(inputs[key]);
           }

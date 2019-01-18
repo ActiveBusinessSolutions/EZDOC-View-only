@@ -49,7 +49,7 @@ export class FormPrintComponent implements OnInit {
     if (isNullOrUndefined(this.client_id) || isNullOrUndefined(this.form_id)) {
       return;
     }
-    $('.loading').show();
+    Common.showLoading();
 
     this._formService.getForm(this.form_id)
       .subscribe(data => {
@@ -66,7 +66,7 @@ export class FormPrintComponent implements OnInit {
 
         this.getDoc();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
@@ -90,7 +90,7 @@ export class FormPrintComponent implements OnInit {
         }
         this.print();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
@@ -107,9 +107,9 @@ export class FormPrintComponent implements OnInit {
         let url = Common.BASE_URL + '/api/downloadDoc?doc_name=' + doc_name + '&token=' + Common.getUser().token;
         window.open(url, '_self');
 
-        $('.loading').fadeOut();
+        Common.hideLoading();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 }

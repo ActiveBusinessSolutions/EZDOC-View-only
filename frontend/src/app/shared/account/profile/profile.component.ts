@@ -43,11 +43,11 @@ export class ProfileComponent implements OnInit {
   avatarBackground = "#5b00ff";
 
   ngOnInit() {
-    $(".loading").show();
+    Common.showLoading();
 
     this._profileService.getMyProfile().subscribe(
       profile => {
-        $(".loading").hide();
+        Common.hideLoading();
 
         this.profile = profile;
         this.avatarExist = profile.avatar.indexOf("avatar.png") < 0;

@@ -7,6 +7,7 @@ import {FormPrintComponent} from "../../form/form-print/form-print.component";
 import {isNullOrUndefined} from "util";
 import { FormService } from 'app/services/form.service';
 import { DocService } from 'app/services/doc.service';
+import { Common } from 'app/common';
 
 declare let $;
 declare let App;
@@ -57,26 +58,26 @@ export class ClientFinishComponent implements OnInit {
   }
 
   getForms() {
-    $('.loading').show();
+    Common.showLoading();
 
     this._formService.getFormsWithoutTemplate()
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
         console.log('forms', data.data);
 
         this.forms = data.data;
         this.getDocs();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
   getDocs() {
-    $('.loading').show();
+    Common.showLoading();
 
     this._clientService.getDocsByClientId(this.client_id)
       .subscribe(data => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
         console.log('completed_docs', data.docs.data);
 
         this.completed_docs = data.docs.data;
@@ -112,7 +113,7 @@ export class ClientFinishComponent implements OnInit {
 
         this._cd.detectChanges();
       }, error => {
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 

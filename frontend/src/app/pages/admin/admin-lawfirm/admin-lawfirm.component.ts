@@ -93,7 +93,7 @@ export class AdminLawfirmComponent implements OnInit {
   }
 
   getLawfirms() {
-    $('.loading').show();
+    Common.showLoading();
     let selected_id = $('#lawfirmList').val();
 
     this._lawfirmService.getLawfirms()
@@ -122,7 +122,7 @@ export class AdminLawfirmComponent implements OnInit {
           $("#lawfirmList").val(selected_id);
         }
 
-        $('.loading').fadeOut();
+        Common.hideLoading();
       });
   }
 
